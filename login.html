@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Affiliate Login | Cheaper360</title>
+    <link rel="icon" href="img/icone.ico"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script>
+        fetch('dashboard_api.php')
+            .then(res => {
+                if (res.ok) window.location.href = 'dashboard.html';
+            })
+            .catch(e => console.log(e));
+    </script>
+    <style>
+        body {
+            font-family: "Proxima Nova", sans-serif;
+            background: #F8F9FA;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            color: #161823;
+        }
+        
+        .auth-card {
+            background: white;
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            text-align: center;
+        }
+        
+        .logo { margin-bottom: 24px; height: 48px; }
+        
+        h1 { font-size: 24px; margin-bottom: 8px; font-weight: 700; }
+        p { color: #8A8B91; margin-bottom: 32px; font-size: 14px; }
+        
+        .form-group { text-align: left; margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #E8E8E8;
+            background: #F8F9FA;
+            border-radius: 8px;
+            font-family: inherit;
+            box-sizing: border-box;
+            transition: all 0.2s;
+        }
+        input:focus { border-color: #FE2C55; background: white; outline: none; }
+        
+        .btn-submit {
+            background: #FE2C55;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+        .btn-submit:hover { background: #E6284C; }
+        
+        .footer-link {
+            margin-top: 24px;
+            font-size: 14px;
+            color: #8A8B91;
+        }
+        .footer-link a { color: #FE2C55; text-decoration: none; font-weight: 600; }
+        
+        .error-msg {
+            background: #FFEAEA;
+            color: #FE2C55;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="auth-card">
+    <a href="index.html">
+        <img src="img/tiktok.png" alt="Logo" class="logo">
+    </a>
+    <h1>Partner Login</h1>
+    <p>Sign in to manage your referrals and earnings</p>
+    
+    <div class="error-msg" id="errorMsg">Invalid credentials</div>
+    
+    <form action="auth.php" method="POST" onsubmit="handleLogin(event)">
+        <input type="hidden" name="action" value="login">
+        
+        <div class="form-group">
+            <label><i class="ri-mail-line"></i> Email Address</label>
+            <input type="email" name="email" required placeholder="you@example.com" oninput="validateEmail(this)">
+        </div>
+        
+        <div class="form-group" style="position: relative;">
+            <label><i class="ri-lock-line"></i> Password</label>
+            <input type="password" name="password" id="passwordInput" required placeholder="••••••••" style="padding-right: 40px;">
+            <i class="ri-eye-off-line" id="toggleIcon" onclick="togglePassword('passwordInput', 'toggleIcon')" 
+               style="position: absolute; right: 12px; top: 38px; cursor: pointer; color: #8A8B91; font-size: 18px;"></i>
+        </div>
+        <div style="text-align: right; margin-bottom: 20px;">
+            <a href="forgot_password.html" style="font-size: 13px; color: #8A8B91; text-decoration: none;">Forgot Password?</a>
+        </div>
+        
+        <button type="submit" class="btn-submit">Sign In</button>
+    </form>
+    
+    <div class="footer-link">
+        Don't have an affiliate account? <a href="register.html">Apply Now</a>
+    </div>
+</div>
+
+<script>
+    function handleLogin(e) {
+        // Form submits naturally to auth.php
+    }
+
+    function togglePassword(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('ri-eye-off-line');
+            icon.classList.add('ri-eye-line');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('ri-eye-line');
+            icon.classList.add('ri-eye-off-line');
+        }
+    }
+
+    function validateEmail(input) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const parent = input.parentElement;
+        
+        if (emailRegex.test(input.value)) {
+            input.style.borderColor = '#25C953'; // Success green
+        } else {
+            input.style.borderColor = input.value ? '#FE2C55' : '#E8E8E8'; // Error red or default
+        }
+    }
+</script>
+
+</body>
+</html>

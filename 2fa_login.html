@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two-Factor Authentication | Cheaper360</title>
+    <link rel="icon" href="img/icone.ico"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Proxima Nova", sans-serif;
+            background: #F8F9FA;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            color: #161823;
+        }
+        
+        .auth-card {
+            background: white;
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            text-align: center;
+        }
+        
+        .icon-box {
+            font-size: 48px;
+            color: #FE2C55;
+            margin-bottom: 24px;
+        }
+        
+        h1 { font-size: 24px; margin-bottom: 8px; font-weight: 700; }
+        p { color: #8A8B91; margin-bottom: 32px; font-size: 14px; }
+        
+        .form-group { text-align: left; margin-bottom: 24px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; text-align: center; }
+        
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #E8E8E8;
+            background: #F8F9FA;
+            border-radius: 8px;
+            font-family: inherit;
+            box-sizing: border-box;
+            font-size: 24px;
+            text-align: center;
+            letter-spacing: 8px;
+            outline: none;
+            transition: all 0.2s;
+        }
+        input:focus { border-color: #FE2C55; background: white; }
+        
+        .btn-submit {
+            background: #FE2C55;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-submit:hover { background: #E6284C; }
+        .btn-submit:disabled { background: #ccc; cursor: not-allowed; }
+        
+        .error-msg {
+            background: #FFEAEA;
+            color: #FE2C55;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 24px;
+            font-size: 14px;
+            color: #8A8B91;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .back-link:hover { color: #FE2C55; }
+    </style>
+</head>
+<body>
+
+<div class="auth-card">
+    <div class="icon-box"><i class="ri-shield-keyhole-fill"></i></div>
+    <h1>Two-Factor Auth</h1>
+    <p>Please enter the 6-digit code from your authenticator app.</p>
+    
+    <div class="error-msg" id="errorMsg">Invalid verification code.</div>
+    
+    <form onsubmit="handle2FA(event)">
+        <div class="form-group">
+            <label>Authentication Code</label>
+            <input type="text" id="otpCode" maxlength="6" inputmode="numeric" required placeholder="000000" autofocus autocomplete="one-time-code">
+        </div>
+        
+        <button type="submit" class="btn-submit" id="btnSubmit">Verify & Login</button>
+    </form>
+    
+    <a href="auth.php?action=logout" class="back-link"><i class="ri-arrow-left-line"></i> Back to Login</a>
+</div>
+
+<script>
+    async function handle2FA(e) {
+        e.preventDefault();
+        const code = document.getElementById('otpCode').value;
+        const errorMsg = document.getElementById('errorMsg');
+        const btn = document.getElementById('btnSubmit');
+        
+        errorMsg.style.display = 'none';
+        btn.disabled = true;
+        btn.innerText = 'Verifying...';
+
+        try {
+            const res = await fetch('2fa_verify.php', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ code })
+            });
+            const data = await res.json();
+            
+            if (data.success) {
+                window.location.href = 'dashboard.html';
+            } else {
+                errorMsg.innerText = data.error || 'Invalid code.';
+                errorMsg.style.display = 'block';
+                document.getElementById('otpCode').value = '';
+            }
+        } catch (err) {
+            errorMsg.innerText = 'Connection error. Try again.';
+            errorMsg.style.display = 'block';
+        } finally {
+            btn.disabled = false;
+            btn.innerText = 'Verify & Login';
+        }
+    }
+
+    // Auto-focus and numeric handling
+    document.getElementById('otpCode').addEventListener('input', function(e) {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+</script>
+
+</body>
+</html>

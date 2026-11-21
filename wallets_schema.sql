@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS saved_wallets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    network VARCHAR(50) DEFAULT 'trc20',
+    label VARCHAR(100) DEFAULT 'My Wallet',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

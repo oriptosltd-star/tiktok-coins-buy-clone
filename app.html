@@ -1,0 +1,1893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Buy Coins | Cheaper360</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Cheaper360">
+    <link rel="apple-touch-icon" href="img/logo.png">
+    
+    <!-- Paddle Removed for UPI -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script src="https://js.stripe.com/v3/"></script>
+    <link href="mobile-responsive.css" rel="stylesheet">
+    <style>
+        /* Fonts */
+        @font-face {
+            font-family: 'Proxima Nova';
+            src: local('Proxima Nova'), local('ProximaNova'), local('Arial'); 
+        }
+
+        :root {
+            --primary: #FE2C55;
+            --primary-hover: #E6284C;
+            --text-main: #161823;
+            --text-sec: rgba(22, 24, 35, 0.75);
+            --text-light: rgba(22, 24, 35, 0.5);
+            --border: rgba(22, 24, 35, 0.12);
+            --bg-input: rgba(22, 24, 35, 0.06);
+            --bg-page: #fff;
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+        }
+
+        body {
+            font-family: "Proxima Nova", "Sofia Pro", "Inter", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            color: var(--text-main);
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+            justify-content: center;
+        }
+
+        #app-container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--bg-page);
+            height: 100%;
+            position: relative;
+            box-shadow: 0 0 40px rgba(0,0,0,0.1);
+            overflow-y: auto;
+            overflow-x: hidden;
+            transform: translateZ(0);
+        }
+
+        /* ... (rest of CSS unchanged until modal specific updates) ... */
+    
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 50%; bottom: 0;
+            width: 100%;
+            max-width: 480px;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.6);
+            z-index: 2147483647; /* Max Z-Index to stay on top */
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(2px);
+        }
+
+        .modal {
+            background: #fff;
+            width: 100%;
+            max-width: 480px;
+            border-radius: 12px;
+            padding: 24px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        .modal-header {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: var(--text-main);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-icon {
+            font-size: 24px;
+            color: var(--text-sec);
+            cursor: pointer;
+            line-height: 1;
+            padding: 4px;
+        }
+        .close-icon:hover { color: var(--text-main); }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        .text-bold { font-weight: 600; color: var(--text-main); }
+        .text-light { color: var(--text-sec); font-weight: 400; }
+        
+        .summary-row.total-row .text-light {
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .summary-row.total-row .text-bold {
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 20px 0;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+
+        /* Payment Methods */
+/* ... */
+/* HTML Updates below */
+
+        
+        /* Header */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            height: 60px;
+            border-bottom: 1px solid var(--border);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            max-width: 480px;
+            background: #fff;
+            z-index: 1000;
+            box-sizing: border-box;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .header-left img { height: 42px; margin-top: 4px; cursor: pointer; }
+        
+        .header-center { display: none; }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon-btn { 
+            background: none; 
+            border: none; 
+            cursor: pointer; 
+            padding: 0;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .icon-btn img { width: 32px; height: 32px; }
+
+        .upload-btn {
+            display: flex;
+            align-items: center;
+            height: 36px;
+            padding: 0 16px;
+            background: rgba(22, 24, 35, 0.03);
+            border: 1px solid rgba(22, 24, 35, 0.03);
+            border-radius: 2px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px; 
+            text-decoration: none;
+            color: var(--text-main);
+            transition: background 0.2s;
+            font-family: "Proxima Nova", "Sofia Pro", sans-serif;
+        }
+        .upload-btn:hover { background: rgba(22, 24, 35, 0.06); }
+        .upload-btn img { width: 20px; margin-right: 8px; }
+
+        .avatar { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; }
+
+        /* Main Layout */
+        main {
+            padding-top: 100px;
+            padding-bottom: 100px;
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+
+        section {
+            padding: 0 16px;
+            margin-bottom: 48px;
+        }
+
+        h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            text-align: left;
+            margin-left: 8px;
+        }
+
+        /* User Input */
+        .user-verify {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            max-width: 500px;
+            margin: 0 auto 40px;
+            /* Remove background white to match screenshot provided by user where it looks cleaner/transparent or clean white */
+            background: transparent; 
+        }
+
+        .user-input {
+            flex: 1;
+            height: 44px; /* Slightly Reduced height to match TikTok compact style */
+            background: #F1F1F2; /* Lighter Grey */
+            border: 1px solid transparent;
+            border-radius: 2px;
+            padding: 0 16px;
+            font-size: 15px;
+            outline: none;
+            font-family: inherit;
+        }
+        .user-input:focus { background: #E3E3E4; } /* Darker grey on focus */
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            height: 44px; /* Match input height */
+            padding: 0 24px;
+            font-weight: 600;
+            font-size: 15px;
+            border-radius: 2px; /* Sharper edges as per TikTok */
+            cursor: pointer;
+            min-width: 96px; /* Slightly reduced width */
+            transition: background 0.2s;
+            font-family: "Proxima Nova", "Sofia Pro", sans-serif;
+        }
+        .btn-primary:hover { background: var(--primary-hover); }
+
+        /* Coin Grid */
+        .coin-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 columns for mobile frame */
+            gap: 16px;
+            margin-top: 20px;
+            padding: 0 8px;
+        }
+
+        .coin-option {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px; /* Slightly reduced padding to fit 4 cols */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            background: #fff;
+            min-height: 100px; 
+            box-sizing: border-box;
+        }
+
+        .coin-option:hover { border-color: rgba(22, 24, 35, 0.34); background: rgba(22, 24, 35, 0.02); }
+        .coin-option.selected { border-color: var(--primary); background-color: rgba(254, 44, 85, 0.04); }
+        .coin-option.selected::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        .coin-amount-wrapper {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .coin-icon { width: 24px; height: 24px; margin-right: 8px; }
+        .coin-count { font-size: 20px; font-weight: 900; color: var(--text-main); }
+        
+        .coin-price {
+            font-size: 15px;
+            color: var(--text-sec);
+            font-weight: 600;
+        }
+
+        /* Floating Total Bar */
+        .total-bar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            background: #fff;
+            border-top: 1px solid var(--border);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 24px;
+            box-sizing: border-box;
+            z-index: 900;
+            box-shadow: 0 -2px 6px rgba(0,0,0,0.04);
+        }
+
+        .total-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+        .total-amount {
+            font-weight: 800;
+            margin-left: 8px;
+            font-size: 20px;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 50%; bottom: 0;
+            width: 100%;
+            max-width: 480px;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.6);
+            z-index: 2147483647; /* Max Z-Index to stay on top */
+            display: none;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(2px);
+        }
+
+        .modal {
+            background: #fff;
+            width: 100%;
+            max-width: 480px;
+            border-radius: 12px;
+            padding: 24px;
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        .modal-header {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: var(--text-main);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close-icon {
+            font-size: 24px;
+            color: var(--text-sec);
+            cursor: pointer;
+            line-height: 1;
+            padding: 4px;
+        }
+        .close-icon:hover { color: var(--text-main); }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        .text-bold { font-weight: 600; color: var(--text-main); }
+        .text-light { color: var(--text-sec); font-weight: 400; }
+        
+        /* New Styles for Total Row and Section Titles */
+        .summary-row.total-row .text-light {
+            color: var(--text-main);
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .summary-row.total-row .text-bold {
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 20px 0;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+
+        /* Payment Methods */
+        .payment-method {
+            display: flex;
+            align-items: center;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            margin-bottom: 1px; /* Overlapping border look */
+            cursor: pointer;
+            transition: background 0.1s;
+        }
+        .payment-method:first-of-type { border-top-left-radius: 8px; border-top-right-radius: 8px; margin-bottom: 10px; }
+        .payment-method:last-of-type { border-bottom-left-radius: 8px; border-bottom-right-radius: 8px; }
+        
+        .payment-method:hover { background: rgba(22, 24, 35, 0.02); }
+        .payment-method.selected {
+            border-color: var(--primary);
+            background: rgba(254, 44, 85, 0.04);
+            z-index: 2;
+        }
+
+        .method-icon { width: 24px; margin: 0 12px; object-fit: contain; }
+        .method-name { flex: 1; font-weight: 600; font-size: 15px; }
+        
+        /* Crypto Logos */
+        .crypto-logos {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: 12px;
+        }
+        .crypto-logo {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        /* Unavailable Badge */
+        .unavailable-badge {
+            background: rgba(22, 24, 35, 0.08);
+            color: var(--text-light);
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        /* Disabled Payment Method */
+        .payment-method.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: rgba(22, 24, 35, 0.02);
+        }
+        .payment-method.disabled:hover {
+            background: rgba(22, 24, 35, 0.02);
+        }
+        
+        .radio-circle {
+            width: 16px; height: 16px; /* Smaller - User requested */
+            border-radius: 50%;
+            border: 1px solid var(--text-light); /* Default grey border */
+            position: relative;
+            box-sizing: border-box;
+            background: #fff;
+            transition: all 0.2s;
+        }
+        .payment-method.selected .radio-circle {
+            border-color: var(--primary);
+            border-width: 5px; /* Creates the "Red Ring" effect with white center */
+            background: #fff; 
+        }
+        /* Remove the pseudo-element since we use border-width trick */
+        .payment-method.selected .radio-circle::after {
+            display: none;
+        }
+
+
+        /* Saved Card UI */
+        .saved-card-details {
+            display: none;
+            padding: 12px 16px;
+            background: #fff;
+            margin-top: -10px; 
+            margin-bottom: 10px;
+            border: 1px solid var(--primary);
+            border-top: none;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+        .card-row { display: flex; align-items: center; font-size: 14px; }
+        .card-row img { width: 32px; margin-right: 12px; border: 1px solid var(--border); border-radius: 2px; }
+
+        .legal-text {
+            font-size: 12px; 
+            color: var(--text-light); 
+            line-height: 1.5;
+            margin-top: 16px;
+        }
+
+        /* Loader */
+        .loader {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+            display: none;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Media Queries */
+        @media (max-width: 768px) {
+            /* Header adjustments */
+            header {
+                padding: 0 16px;
+                height: 52px;
+            }
+            .header-right { gap: 12px; }
+            .header-left img { height: 32px; margin-top: 2px; }
+
+            /* Main Layout */
+            main { 
+                padding-left: 16px; 
+                padding-right: 16px; 
+                padding-top: 70px; 
+                padding-bottom: 80px; 
+            }
+
+            h1 { font-size: 24px; margin-bottom: 24px; font-weight: 700; }
+            h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+            section { padding: 0; margin-bottom: 32px; }
+
+            /* Coin Grid: 3 Columns on Mobile */
+            .coin-grid { 
+                grid-template-columns: repeat(3, 1fr) !important; /* 3 boxes per row */
+                gap: 8px; 
+                padding: 0;
+            }
+
+            .coin-option {
+                padding: 12px 4px; /* Very compact padding */
+                min-height: auto;
+                height: 90px;
+                display: flex; 
+                flex-direction: column;
+                justify-content: center;
+                grid-column: span 1 !important; /* Force single column width */
+                width: 100% !important; /* Force full width */
+                box-sizing: border-box !important; /* Include padding in width */
+                min-width: 0 !important; /* Allow shrinking */
+                max-width: 100% !important; /* Prevent expansion */
+            }
+            
+            /* Ensure custom box also single column */
+            .coin-option:last-child {
+                grid-column: span 1 !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            .coin-count { font-size: 16px; margin-bottom: 0; }
+            .coin-price { font-size: 13px; }
+            .coin-icon { width: 18px; height: 18px; margin-bottom: 4px; }
+            .coin-amount-wrapper {
+                flex-direction: column; /* Stack icon and text on mobile for space */
+                margin-bottom: 4px;
+            }
+            .coin-icon { margin-right: 0; }
+            
+            /* Custom box text - smaller for professional look */
+            .coin-option:last-child .coin-count,
+            .coin-option:last-child h3,
+            .coin-option:last-child strong {
+                font-size: 14px !important;
+                font-weight: 700 !important;
+            }
+            
+            .coin-option:last-child p,
+            .coin-option:last-child small {
+                font-size: 11px !important;
+                line-height: 1.2 !important;
+                margin: 0 !important;
+            }
+            
+            /* Ensure all coin icons same size */
+            .coin-option .coin-icon,
+            .coin-option:last-child .coin-icon {
+                width: 18px !important;
+                height: 18px !important;
+            }
+
+            /* Total Bar */
+            .total-bar { 
+                padding: 12px 16px; 
+            }
+            .total-text { font-size: 16px; }
+            .total-amount { font-size: 18px; }
+
+            /* Modal: Professional Bottom Sheet */
+            .modal {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                border-radius: 12px 12px 0 0;
+                margin: 0;
+                max-height: 90vh; /* Allow more height */
+                padding: 24px 20px; /* Spacious professional padding */
+                box-sizing: border-box; /* Prevent padding overflow */
+                animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            
+            @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+            .modal-header {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                margin-bottom: 24px;
+                min-height: 24px;
+            }
+
+            .modal-title {
+                font-size: 17px; 
+                font-weight: 700; 
+                color: var(--text-main);
+                letter-spacing: -0.2px;
+            }
+
+            .close-icon-container {
+                position: absolute;
+                left: -4px; /* Align visually with edge */
+                top: 50%;
+                transform: translateY(-50%);
+                padding: 8px; /* Touch target */
+                cursor: pointer;
+                display: flex;
+                color: rgba(22, 24, 35, 0.5); /* Subtle close icon color */
+            }
+            .close-icon-svg { width: 14px; height: 14px; }
+            
+            /* Inputs - Horizontal layout with 70/30 split */
+            .user-verify {
+                flex-direction: row !important;
+                gap: 10px !important;
+                margin-bottom: 24px !important;
+                width: 100% !important;
+                max-width: none !important;
+                padding: 0 !important;
+            }
+            
+            .user-input {
+                width: 70% !important;
+                height: auto !important;
+                padding: 11px 14px !important;
+                margin: 0 !important;
+                background: #fff !important;
+                border: 1px solid rgba(22, 24, 35, 0.12) !important;
+                border-radius: 4px !important;
+                box-sizing: border-box !important;
+                flex-shrink: 0 !important;
+            }
+            
+            .user-input:focus {
+                background: #fff !important;
+                border-color: var(--primary) !important;
+            }
+            
+            .btn-primary {
+                width: 30% !important;
+                height: auto !important;
+                padding: 12px 20px !important;
+                box-sizing: border-box !important;
+                flex-shrink: 0 !important;
+            }
+            
+            /* Sections - Reduce spacing */
+            section {
+                padding: 0 8px !important;
+                margin-bottom: 20px !important;
+            }
+            
+            h1 {
+                font-size: 26px !important;
+                margin-bottom: 20px !important;
+                display: block !important;
+                visibility: visible !important;
+            }
+            
+            h2 {
+                font-size: 20px !important;
+                margin-bottom: 14px !important;
+                margin-left: 0 !important;
+            }
+        }
+
+        @media (max-width: 380px) {
+            /* Small phone tweaks */
+            .coin-count { font-size: 15px; }
+        }
+
+        /* Verification Message Style */
+        .verify-msg-container {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 12px;
+            font-size: 14px;
+            color: #25C953;
+            font-weight: 600;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        /* Responsive Logic for Custom Input */
+        .desktop-only-input {
+            display: block; /* Default for Desktop */
+        }
+        
+        @media (max-width: 768px) {
+            .desktop-only-input {
+                display: none !important; /* Hide inline input on Mobile, force Modal */
+            }
+        }
+
+        /* Referral-Gated Access System Styles */
+        .full-site-only {
+            display: flex !important;
+        }
+        .full-site-only.hidden {
+            display: none !important;
+        }
+
+
+    </style>
+</head>
+<body>
+<div id="app-container">
+<header>
+    <div class="header-left">
+        <img src="img/tiktok.png" alt="TikTok" onclick="location.reload()" style="cursor: pointer;">
+    </div>
+    <div class="header-right">
+        <a href="#" class="upload-btn full-site-only">
+            <i class="ri-add-line" style="font-size: 20px; margin-right: 6px;"></i> Upload
+        </a>
+        <button class="icon-btn full-site-only">
+            <i class="ri-send-plane-fill" style="font-size: 24px;"></i>
+        </button>
+        <button class="icon-btn full-site-only">
+            <i class="ri-message-3-line" style="font-size: 24px;"></i>
+        </button>
+        <div class="avatar full-site-only" style="background: #E8E8E8; display: flex; align-items: center; justify-content: center;">
+             <i class="ri-user-fill" style="color: #555;"></i>
+        </div>
+    </div>
+</header>
+
+<main>
+    <h1>Get Coins</h1>
+    
+    <section class="user-verify-section">
+        <style>
+            .verified-icon {
+                display: none;
+                color: #25C953;
+                animation: zoomIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            }
+            @keyframes zoomIn { from { transform: scale(0); } to { transform: scale(1); } }
+            
+            /* Ensure icon sits correctly next to input when verified */
+            .user-verify.verified {
+                flex-direction: row; /* Force row layout when verified */
+                align-items: center;
+            }
+
+            /* Search Result Card */
+            .user-search-result {
+                display: none;
+                background: #fff;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: 16px;
+                margin: 10px auto 40px;
+                max-width: 500px;
+                align-items: center;
+                gap: 16px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            }
+            .user-search-result.visible { display: flex; }
+            
+            .search-avatar {
+                width: 56px; height: 56px; 
+                border-radius: 50%; 
+                object-fit: cover;
+                border: 1px solid var(--border);
+            }
+            .search-info { flex: 1; text-align: left; }
+            .search-name { font-weight: 700; font-size: 16px; color: var(--text-main); margin-bottom: 4px; }
+            .search-username { color: var(--text-sec); font-size: 14px; }
+            
+            .btn-connect {
+                background: #fff;
+                color: var(--text-main);
+                border: 1px solid var(--border);
+                padding: 8px 24px;
+                border-radius: 4px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+            }
+            .btn-connect:hover { background: var(--bg-input); }
+
+            .user-verify-input-group {
+                display: flex;
+                gap: 12px;
+                width: 100%;
+                justify-content: center;
+            }
+
+            /* Suggestion List */
+            .suggestions-container {
+                display: none;
+                max-width: 500px;
+                margin: 0 auto 40px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            .suggestions-container.visible { display: flex; }
+            
+            .suggestion-header {
+                font-size: 14px;
+                color: var(--text-sec);
+                text-align: left;
+                margin-bottom: 4px;
+                padding-left: 4px;
+            }
+
+            .suggestion-item {
+                display: flex;
+                align-items: center;
+                padding: 12px;
+                background: #fff;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                gap: 12px;
+                cursor: pointer;
+                transition: background 0.2s;
+            }
+            .suggestion-item:hover { background: rgba(22, 24, 35, 0.03); }
+            
+            .suggestion-avatar {
+                width: 44px; height: 44px;
+                border-radius: 50%;
+                object-fit: cover;
+                background: #ccc;
+            }
+        </style>
+
+        <!-- Initial Search Box -->
+        <div class="user-verify" id="userVerifyBox">
+            <div class="user-verify-input-group" id="inputGroup">
+                <input type="text" class="user-input" id="usernameInput" placeholder="Enter username" value="khaby.lame">
+                <button class="btn-primary" id="searchBtn" onclick="searchUser()">Search</button>
+            </div>
+        </div>
+
+        <!-- Verified State (Generated dynamically) -->
+        <div class="verified-state" id="verifiedState" style="display: none; align-items: center; justify-content: space-between; width: 100%; max-width: 400px; margin: 0 auto; background: #f8f8f8; padding: 12px 20px; border-radius: 8px; border: 1px solid #e0e0e0;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <img src="" id="finalAvatar" style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;">
+                <div style="text-align: left;">
+                    <div id="finalName" style="font-weight: 700; font-size: 15px; color: #161823;"></div>
+                    <div style="color: #25C953; font-size: 13px; display: flex; align-items: center; gap: 4px; font-weight: 600;">
+                        <svg width="12" height="12" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="24" cy="24" r="24" fill="#25C953"/>
+                            <path d="M14 24L21 31L34 16" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Connected
+                    </div>
+                </div>
+            </div>
+            <button onclick="unlinkUser()" style="background: transparent; border: 1px solid #ddd; padding: 6px 12px; border-radius: 4px; font-size: 13px; font-weight: 600; color: #555; cursor: pointer;">Unlink</button>
+        </div>
+    
+    <!-- Search Result Container (Exact Match) -->
+    <div class="user-search-result" id="searchResult" style="position: relative;">
+        <img src="" class="search-avatar" id="resultAvatar">
+        <div class="search-info">
+            <div class="search-name" id="resultName"></div>
+            <div class="search-username" id="resultUsername"></div>
+        </div>
+        <button class="btn-primary btn-connect" onclick="connectUser()">Connect</button>
+    </div>
+
+        <!-- Suggestions Container (Fallback) -->
+        <div class="suggestions-container" id="suggestionsBox">
+            <div class="suggestion-header">User not found. Closest matches:</div>
+            <div id="suggestionsList">
+                <!-- Items injected here -->
+            </div>
+        </div>
+
+        <div id="verifyMessage" class="verify-msg-container"></div>
+    </section>
+
+
+    <section>
+        <h2>Recharge</h2>
+        <div class="coin-grid" id="coinGrid">
+            <!-- Dynamically populated -->
+        </div>
+    </section>
+</main>
+
+
+
+<div class="total-bar">
+    <div class="total-text">Total: <span class="total-amount" id="totalDisplay">$0.00</span></div>
+    <button class="btn-primary" id="rechargeBtn" style="min-width: 140px;" onclick="openPaymentModal()">Recharge</button>
+</div>
+
+<!-- Payment Modal -->
+<div class="modal-overlay" id="paymentModal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">Order summary</div>
+            <div class="close-icon-container" onclick="closePaymentModal()" style="cursor: pointer;">
+                <svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 14L34 34" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14 34L34 14" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+        </div>
+        
+        <div class="summary-row">
+            <span class="text-light">Account</span>
+            <span class="text-bold" id="modalAccountName">rappel.pourtoii</span>
+        </div>
+        
+        <div class="summary-row total-row" style="margin-top: 16px; align-items: flex-end;">
+            <div style="display: flex; flex-direction: column;">
+                <span class="text-main" style="font-weight: 700; font-size: 16px;">Total</span>
+                <span class="text-light" style="font-size: 13px; margin-top: 4px;" id="modalCoinsSubtext">30 Coins</span>
+            </div>
+            <span class="text-bold" id="modalTotal" style="font-size: 18px;">$0.00</span>
+        </div>
+
+        <div class="summary-row" id="modalDiscountRow" style="display:none; color: #000000;">
+            <span style="font-weight: 600;">Extra 5% Discount</span>
+            <span class="text-bold" id="modalDiscountAmount">-$0.00</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section-title">Payment method</div>
+
+        <!-- Promo Code -->
+        <div style="margin-top: 12px; margin-bottom: 12px;">
+            <div style="position: relative;">
+                <input type="text" id="promoCodeInput" placeholder="Pro / Referral Code" 
+                       style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-family: inherit; text-transform: uppercase; letter-spacing: 1px; box-sizing: border-box; padding-right: 40px; outline: none; box-shadow: none;"
+                       oninput="applyPromoCode(this.value)">
+                <i id="promoStatusIcon" class="ri-coupon-3-line" 
+                   style="position: absolute; right: 12px; top: 9px; font-size: 18px; color: var(--text-sec); transition: all 0.2s;"></i>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="section-title">Payment method</div>
+
+        <div class="payment-group">
+
+
+                
+                <!-- Secure Checkout Option -->
+                <div class="payment-method" onclick="selectMethod('card')" id="method-card">
+                    <div style="display:flex; align-items:center; flex:1;">
+                        <div class="radio-circle"></div>
+                        <span class="method-name" style="margin-left: 12px;">Secure Checkout</span>
+                    </div>
+                </div>
+                <!-- Stripe Elements Container -->
+                <div id="card-element-container" style="display: none; padding: 16px; border: 1px solid var(--border); border-radius: 8px; margin-top: 12px; background: #fafafa;">
+                    <div id="payment-element"></div>
+                </div>
+
+        </div>
+
+        <p class="legal-text">
+            By continuing, you agree to our Terms of Service and acknowledge that you have read our Privacy Policy.
+        </p>
+
+        <div id="paymentErrorBox" style="display:none; color: #ff4444; margin-bottom: 12px; font-size: 14px; text-align: center;"></div>
+        <button class="btn-primary" id="payNowBtn" style="width: 100%; margin-top: 24px;" onclick="processPayment()">
+            <span id="payText">Pay Now</span>
+            <div class="loader" id="payLoader"></div>
+        </button>
+    </div>
+</div>
+
+<!-- Success Modal -->
+<div class="modal-overlay" id="successModal">
+    <div class="modal" style="text-align: center;">
+        <div style="width: 60px; height: 60px; background: #25C953; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px;">✓</div>
+        <div class="modal-header">Payment Successful</div>
+        <p class="text-light">Your coins have been added to your account.</p>
+        <button class="btn-primary" style="width: 100%;" onclick="location.reload()">Done</button>
+    </div>
+</div>
+
+<!-- Custom Coin Modal -->
+<div class="modal-overlay" id="customCoinModal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="close-icon-container" onclick="closeCustomModal()">
+                <svg class="close-icon-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 12L36 36" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M36 12L12 36" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="modal-title">Custom</div>
+        </div>
+        
+        <div style="margin: 24px 0;">
+            <div style="font-size: 14px; color: var(--text-sec); margin-bottom: 8px; font-weight: 600;">Number of Coins +</div>
+            <div style="display: flex; align-items: center; background: #f5f5f5; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
+                <input type="text" id="popupCustomInput" placeholder="0" readonly
+                    style="font-size: 32px; font-weight: 700; border: none; outline: none; width: 100%; color: var(--text-main); font-family: inherit; background: transparent; text-align: center;">
+            </div>
+            
+            <!-- Numeric Keypad -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;">
+                <button onclick="addDigit('1')" style="padding: 20px; font-size: 24px; font-weight: 600; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; cursor: pointer;">1</button>
+                <button onclick="addDigit('2')" style="padding: 20px; font-size: 24px; font-weight: 600; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; cursor: pointer;">2</button>
+                <button onclick="addDigit('3')" style="padding: 20px; font-size: 24px; font-weight: 600; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; cursor: pointer;">3</button>
+                <button onclick="addDigit('4')" style="padding: 20px; font-size: 24px; font-weight: 600; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; cursor: pointer;">4</button>
+                <button onclick="addDigit('5')" style="padding: 20px; font-size: 24px; font-weight: 600; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; cursor: pointer;">5</button>
+                <button onclick="addDigit('6')" style="padding: 20px; font-size: 24px; font-weight: 600; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; cursor: pointer;">6</button>
+                <button onclick="addDigit('7')" style="padding: 20px; font-size: 24px; font-weight: 600; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; cursor: pointer;">7</button>
+                <button onclick="addDigit('8')" style="padding: 20px; font-size: 24px; font-weight: 600; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; cursor: pointer;">8</button>
+                <button onclick="addDigit('9')" style="padding: 20px; font-size: 24px; font-weight: 600; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; cursor: pointer;">9</button>
+                <button onclick="clearInput()" style="padding: 20px; font-size: 18px; font-weight: 600; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; cursor: pointer; color: #ff4444;">C</button>
+                <button onclick="addDigit('0')" style="padding: 20px; font-size: 24px; font-weight: 600; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; cursor: pointer;">0</button>
+                <button onclick="backspace()" style="padding: 20px; font-size: 18px; font-weight: 600; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; cursor: pointer;">⌫</button>
+            </div>
+        </div>
+
+        <button class="btn-primary" style="width: 100%; height: 52px; font-size: 16px; font-weight: 700;" id="btnBuyCustom" onclick="confirmCustomPurchase()">
+            PAY AMOUNT <span id="popupCustomPrice">$0.00</span>
+        </button>
+    </div>
+</div>
+
+<!-- Alert/Confirm Modal -->
+<div id="alertModal" class="modal-overlay">
+    <div class="modal" style="max-width: 340px; text-align: center; padding: 32px;">
+        <div id="alertIcon" style="font-size: 56px; margin-bottom: 20px; line-height: 1;"></div>
+        <div id="alertTitle" style="font-size: 20px; font-weight: 700; margin-bottom: 12px;">Notice</div>
+        <p id="alertMessage" style="color: var(--text-sec); font-size: 15px; margin-bottom: 28px; line-height: 1.6;"></p>
+        
+        <div id="modalActions" style="display: flex; gap: 12px;">
+            <button id="modalBtnCancel" onclick="closeAlertModal()" class="btn-primary" style="display: none; flex: 1; padding: 12px; background: #f0f0f0; color: #333; border: 1px solid #ddd;">Cancel</button>
+            <button id="modalBtnOk" onclick="closeAlertModal()" class="btn-primary" style="flex: 1; padding: 12px;">Okay</button>
+        </div>
+    </div>
+</div>
+
+</div> <!-- End of app-container -->
+
+<script>
+    const bundles = [
+        { coins: 10000, price: 40.00, priceId: 'pri_01kfvrmpyx86ckcz4bp6k2nfdd' },
+        { coins: 20000, price: 80.00, priceId: 'pri_01kfvrjv0y5tg33ceys8gg0z1n' },
+        { coins: 30000, price: 120.00, priceId: 'pri_01kfvrpmzq1t01az6m6pwbkjpf' },
+        { coins: 40000, price: 160.00, priceId: 'pri_01kfvrr1jac41awqnc77cg0c7y' },
+        { coins: 50000, price: 200.00, priceId: 'pri_01kfvrscrr6pvg3g8df8zhr101' },
+        { coins: 100000, price: 400.00, priceId: 'pri_01kfvrtqvzbnm4g6f0ybbbrrfs' },
+        { coins: 200000, price: 800.00, priceId: 'pri_01kfvrvwcjyr28f5p8yme5qedc' },
+        { coins: 'Custom', price: null }
+    ];
+
+    // ========================================
+    // REFERRAL-GATED ACCESS SYSTEM WITH VALIDATION
+    // ========================================
+    
+    /**
+     * Validate referral code with backend
+     * @param {string} code - Referral code to validate
+     * @returns {Promise<boolean>} true if valid
+     */
+    async function validateReferralCode(code) {
+        try {
+            const response = await fetch(`check_referral.php?code=${encodeURIComponent(code)}`);
+            const data = await response.json();
+            return data.valid === true;
+        } catch (err) {
+            console.error('Referral validation error:', err);
+            return false;
+        }
+    }
+    
+    /**
+     * Check if user has valid referral access
+     * @returns {Promise<boolean>} true if user has referral access
+     */
+    async function checkReferralAccess() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const refCode = urlParams.get('ref');
+        
+        // If referral code in URL, validate it
+        if (refCode) {
+            const isValid = await validateReferralCode(refCode);
+            
+            if (isValid) {
+                // Save valid referral code
+                localStorage.setItem('referralCode', refCode);
+                localStorage.setItem('hasReferralAccess', 'true');
+                
+                // Also set cookie for 30 days (backward compatibility)
+                const d = new Date();
+                d.setTime(d.getTime() + (30*24*60*60*1000));
+                document.cookie = "ref_code=" + refCode + ";expires=" + d.toUTCString() + ";path=/";
+                
+                console.log('✅ Valid referral code:', refCode);
+                return true;
+            } else {
+                // Invalid code - clear any previous access
+                localStorage.removeItem('referralCode');
+                localStorage.removeItem('hasReferralAccess');
+                console.log('❌ Invalid referral code:', refCode);
+                return false;
+            }
+        }
+        
+        // Check if previously validated and saved
+        const savedCode = localStorage.getItem('referralCode');
+        if (savedCode && localStorage.getItem('hasReferralAccess') === 'true') {
+            // Re-validate saved code
+            const isValid = await validateReferralCode(savedCode);
+            if (isValid) {
+                console.log('✅ Saved referral code still valid:', savedCode);
+                return true;
+            } else {
+                // Saved code no longer valid
+                localStorage.removeItem('referralCode');
+                localStorage.removeItem('hasReferralAccess');
+                console.log('❌ Saved referral code expired:', savedCode);
+                return false;
+            }
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Show limited version (no referral access)
+     */
+    function showLimitedVersion() {
+        // Hide all full-site-only elements
+        document.querySelectorAll('.full-site-only').forEach(el => {
+            el.classList.add('hidden');
+        });
+        
+        console.log('🔒 Limited Access Mode: Coins purchase only');
+    }
+    
+    /**
+     * Show full version (has referral access)
+     */
+    function showFullVersion() {
+        // Show all full-site-only elements
+        document.querySelectorAll('.full-site-only').forEach(el => {
+            el.classList.remove('hidden');
+        });
+        
+        const refCode = localStorage.getItem('referralCode');
+        console.log('✅ Full Access Mode: Referral code', refCode);
+    }
+    
+    /**
+     * Initialize access control on page load
+     */
+    async function initializeAccessControl() {
+        const hasAccess = await checkReferralAccess();
+        if (hasAccess) {
+            showFullVersion();
+        } else {
+            showLimitedVersion();
+        }
+    }
+    
+    // Initialize Payment Status Check
+    window.addEventListener('DOMContentLoaded', async () => {
+        // Initialize access control FIRST (async now)
+        await initializeAccessControl();
+        
+        // Check payment status
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('payment') === 'success') {
+            document.getElementById('successModal').style.display = 'flex';
+            // Clean URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    });
+
+    let selectedIndex = 0; // Default 10000 coins
+    let currentMethod = 'card';
+
+    // Global User State
+    let connectedUser = {
+        name: 'rappel.pourtoii',
+        avatar: '', // Default empty
+        username: 'rappel.pourtoii'
+    };
+
+    let customCoins = 0; // Moved to top scope
+
+    function renderGrid() {
+        const grid = document.getElementById('coinGrid');
+        grid.innerHTML = '';
+        bundles.forEach((b, idx) => {
+            const isCustom = b.coins === 'Custom';
+            const html = document.createElement('div');
+            html.className = `coin-option ${idx === selectedIndex ? 'selected' : ''}`;
+            
+            html.onclick = (e) => {
+                if (window.innerWidth < 768 && isCustom) {
+                     // Static on mobile - do nothing
+                     return;
+                } else {
+                     if(isCustom) {
+                         const input = document.getElementById('desktopCustomInput');
+                         if(input) input.focus();
+                     }
+                     selectBundle(idx);
+                }
+            };
+            
+            if (isCustom) {
+                 html.innerHTML = `
+                    <div style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                        <!-- Icon on top -->
+                        <div class="coin-amount-wrapper">
+                            <img src="img/cointiktok.png" class="coin-icon">
+                        </div>
+                        
+                        <!-- Heading in middle -->
+                        ${idx === selectedIndex ? 
+                          `<input type="number" id="desktopCustomInput" placeholder="Custom" 
+                           value="${customCoins > 0 ? customCoins : ''}"
+                           style="width: 100%; border: none; font-size: 16px; font-weight: 900; outline: none; text-align: center; background: transparent; color: var(--text-main); font-family: inherit; padding: 0; margin-bottom: 1px;"
+                           onclick="event.stopPropagation()" 
+                           oninput="updateCustomPrice(this.value)">` 
+                           : 
+                          `<span class="coin-count" style="font-size: 16px; font-weight: 900; margin-bottom: 1px;">Custom</span>`
+                        }
+                        
+                        <!-- Text at bottom -->
+                        ${idx === selectedIndex ? 
+                            `<div class="coin-price" id="customPricePreview" style="font-size: 13px;">
+                               ${customCoins > 0 ? '$' + (customCoins * 0.004).toFixed(2) : '$0.00'}
+                            </div>`
+                            : 
+                            `<div class="coin-price" style="font-size: 11px; text-align: center; line-height: 1.2;">Large amount supported</div>`
+                        }
+                    </div>
+                `;
+            } else {
+                html.innerHTML = `
+                    <div class="coin-amount-wrapper">
+                        <img src="img/cointiktok.png" class="coin-icon">
+                        <span class="coin-count">${b.coins.toLocaleString()}</span>
+                    </div>
+                    <div class="coin-price">$${b.price.toFixed(2)}</div>
+                `;
+            }
+            grid.appendChild(html);
+        });
+        updateTotal();
+    }
+    
+    function selectBundle(idx) {
+        selectedIndex = idx;
+        renderGrid();
+    }
+    
+    function updateCustomPrice(val) {
+        customCoins = parseInt(val) || 0;
+        const popupInput = document.getElementById('popupCustomInput');
+        if(popupInput) popupInput.value = customCoins > 0 ? customCoins : '';
+        updateTotal();
+    }
+
+    function openCustomModal() {
+        document.getElementById('customCoinModal').style.display = 'flex';
+        document.getElementById('popupCustomInput').value = '';
+        document.getElementById('popupCustomPrice').innerText = '$0.00';
+    }
+
+    function closeCustomModal() {
+        document.getElementById('customCoinModal').style.display = 'none';
+    }
+
+    function addDigit(digit) {
+        const input = document.getElementById('popupCustomInput');
+        const currentValue = input.value || '0';
+        const newValue = currentValue === '0' ? digit : currentValue + digit;
+        input.value = newValue;
+        handleCustomPopupInput(newValue);
+    }
+
+    function clearInput() {
+        const input = document.getElementById('popupCustomInput');
+        input.value = '';
+        handleCustomPopupInput('0');
+    }
+
+    function backspace() {
+        const input = document.getElementById('popupCustomInput');
+        const currentValue = input.value || '';
+        const newValue = currentValue.slice(0, -1);
+        input.value = newValue;
+        handleCustomPopupInput(newValue || '0');
+    }
+
+    function handleCustomPopupInput(val) {
+        const num = parseInt(val);
+        const btn = document.getElementById('btnBuyCustom');
+        const priceLabel = document.getElementById('popupCustomPrice');
+        
+        if (!num || num <= 0) {
+            priceLabel.innerText = '$0.00';
+            return;
+        }
+
+        const price = (num * 0.004).toFixed(2);
+        priceLabel.innerText = '$' + price;
+    }
+
+    function confirmCustomPurchase() {
+        const val = document.getElementById('popupCustomInput').value;
+        customCoins = parseInt(val);
+        if (!customCoins || customCoins <= 0) return;
+        selectedIndex = bundles.length - 1;
+        closeCustomModal();
+        renderGrid();
+        openPaymentModal();
+    }
+
+    function updateTotal() {
+        const b = bundles[selectedIndex];
+        let price = '0.00';
+        let coins = '0';
+        
+        if (b.coins === 'Custom') {
+             const rate = 0.004;
+             const calculated = customCoins * rate;
+             price = calculated.toFixed(2);
+             coins = customCoins.toLocaleString();
+             const label = document.getElementById('customPriceLabel');
+             if(label) label.innerText = `$${price}`;
+        } else if (b.price) {
+            price = b.price.toFixed(2);
+            coins = b.coins.toLocaleString();
+        } else {
+            price = '0.00'; 
+        }
+        document.getElementById('totalDisplay').innerText = '$' + price;
+        document.getElementById('modalTotal').innerText = '$' + price;
+        document.getElementById('modalCoinsSubtext').innerText = coins + ' Coins';
+        updateExpressAmount();
+    }
+
+    function openPaymentModal() {
+        document.getElementById('modalAccountName').innerText = connectedUser.username; 
+        const urlParams = new URLSearchParams(window.location.search);
+        let refCode = urlParams.get('ref');
+
+        if (!refCode) {
+             refCode = (document.cookie.match(/^(?:.*;)?\s*ref_code\s*=\s*([^;]+)(?:.*)?$/)||[,null])[1] || '';
+        }
+
+        if (refCode) {
+            const input = document.getElementById('promoCodeInput');
+            if(input) {
+                input.value = refCode;
+                applyPromoCode(refCode); 
+            }
+        }
+        document.getElementById('paymentModal').style.display = 'flex';
+        selectMethod('card');
+        updatePaymentAmount();
+    }
+
+    let promoDebounceTimer;
+
+    function applyPromoCode(code) {
+        code = code.trim();
+        const icon = document.getElementById('promoStatusIcon');
+        const discountRow = document.getElementById('modalDiscountRow');
+        const discountAmountEl = document.getElementById('modalDiscountAmount');
+        const totalEl = document.getElementById('modalTotal');
+        const inputField = document.getElementById('promoCodeInput');
+        
+        // Base Price
+        let basePrice = 0;
+        const b = bundles[selectedIndex];
+        if (b.coins === 'Custom') {
+             basePrice = customCoins * 0.004;
+        } else {
+             basePrice = b.price;
+        }
+
+        inputField.style.borderColor = 'var(--border)';
+        icon.className = 'ri-coupon-3-line';
+        icon.style.color = 'var(--text-sec)';
+
+        if (code.length === 0) {
+            discountRow.style.display = 'none';
+            totalEl.innerText = '$' + basePrice.toFixed(2);
+            return;
+        }
+
+        clearTimeout(promoDebounceTimer);
+        promoDebounceTimer = setTimeout(async () => {
+            try {
+                const res = await fetch(`check_referral.php?code=${code}`);
+                const data = await res.json();
+
+                if (data.valid) {
+                    const discount = basePrice * 0.05;
+                    const finalPrice = basePrice - discount;
+                    
+                    discountAmountEl.innerText = '-$' + discount.toFixed(2);
+                    totalEl.innerText = '$' + finalPrice.toFixed(2);
+                    
+                    discountRow.style.display = 'flex';
+                    
+                    inputField.style.borderColor = '#25C953';
+                    icon.className = 'ri-checkbox-circle-fill';
+                    icon.style.color = '#25C953';
+                    updatePaymentAmount();
+                } else {
+                    discountRow.style.display = 'none';
+                    totalEl.innerText = '$' + basePrice.toFixed(2);
+                    
+                    inputField.style.borderColor = '#FE2C55';
+                    icon.className = 'ri-close-circle-fill';
+                    icon.style.color = '#FE2C55';
+                    updatePaymentAmount();
+                }
+            } catch (err) {
+                console.error("Validation error", err);
+            }
+        }, 500); 
+    }
+
+    function closePaymentModal() {
+        document.getElementById('paymentModal').style.display = 'none';
+        const btn = document.getElementById('payNowBtn');
+        const text = document.getElementById('payText');
+        const loader = document.getElementById('payLoader');
+        btn.disabled = false;
+        text.style.display = 'block';
+        loader.style.display = 'none';
+    }
+
+    let stripe;
+    let paymentElement;
+    let elementsInstance;
+
+    function updatePaymentAmount() {
+        if (!elementsInstance) return;
+        const totalText = document.getElementById('modalTotal').innerText.replace('$', '');
+        let amt = parseFloat(totalText);
+        if (isNaN(amt) || amt <= 0) return;
+        elementsInstance.update({
+            amount: Math.round(amt * 100)
+        });
+    }
+
+    function selectMethod(method) {
+        currentMethod = method;
+        document.querySelectorAll('.payment-method').forEach(el => el.classList.remove('selected'));
+        document.getElementById('method-' + method).classList.add('selected');
+        
+        const cardContainer = document.getElementById('card-element-container');
+        if (method === 'card') {
+            cardContainer.style.display = 'block';
+            if (!stripe) {
+                stripe = Stripe('pk_live_51TuycHE0rHzJS7UuqDrvgd2kzMYoFaXQ2mT28ozOPodOJk0sQovt1k4bugaRxwPur4x4JZSQGWhS5hazCuqk5ujo00aHjkLDkt');
+                elementsInstance = stripe.elements({
+                    mode: 'payment',
+                    amount: 4000, // placeholder, updated via updatePaymentAmount
+                    currency: 'usd',
+                });
+                
+                // Unified Payment Element
+                paymentElement = elementsInstance.create('payment', {
+                    layout: 'tabs'
+                });
+                paymentElement.mount('#payment-element');
+            }
+        } else {
+            cardContainer.style.display = 'none';
+        }
+    }
+
+    async function processPayment() {
+        const btn = document.getElementById('payNowBtn');
+        const text = document.getElementById('payText');
+        const loader = document.getElementById('payLoader');
+        const errorBox = document.getElementById('paymentErrorBox'); 
+        
+        btn.disabled = true;
+        text.style.display = 'none';
+        loader.style.display = 'block';
+        errorBox.style.display = 'none'; 
+
+        const b = bundles[selectedIndex];
+        let amount = 0;
+        let productName = '';
+        
+        if (b.coins === 'Custom') {
+             amount = customCoins * 0.004; 
+             productName = customCoins + ' Coins';
+        } else {
+             amount = b.price;
+             productName = b.coins + ' Coins';
+        }
+        
+        const promoCode = document.getElementById('promoCodeInput').value.trim();
+
+        let payload = {
+            referral_code: promoCode
+        };
+
+        if (b.coins === 'Custom') {
+            payload.product_id = 'custom_amount';
+            payload.custom_coins = customCoins;
+        } else {
+            payload.product_id = b.priceId;
+        }
+
+        try {
+            const {error: submitError} = await elementsInstance.submit();
+            if (submitError) {
+                throw new Error(submitError.message);
+            }
+
+            // Stripe Payment with Elements
+            const response = await fetch('create_stripe_payment.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Payment failed');
+            if (!data.client_secret) throw new Error('Could not retrieve payment intent');
+
+            const result = await stripe.confirmPayment({
+                elements: elementsInstance,
+                clientSecret: data.client_secret,
+                confirmParams: {
+                    return_url: window.location.href.split('?')[0] + '?payment_success=true'
+                },
+                redirect: 'if_required'
+            });
+
+            if (result.error) {
+                throw new Error(result.error.message);
+            } else {
+                if (result.paymentIntent.status === 'succeeded' || result.paymentIntent.status === 'processing') {
+                    closePaymentModal();
+                    showAlert('Payment Successful!', 'Your transaction is being processed and coins will be credited.', 'success', false);
+                }
+            }
+        } catch (err) {
+            loader.style.display = 'none';
+            text.style.display = 'block';
+            btn.disabled = false;
+            errorBox.innerText = err.message;
+            errorBox.style.display = 'block';
+        }
+    }
+
+
+
+    let modalResolver = null;
+
+    function showAlert(title, message, type = 'info', isConfirm = false) {
+        return new Promise((resolve) => {
+            const modal = document.getElementById('alertModal');
+            const iconEl = document.getElementById('alertIcon');
+            const btnOk = document.getElementById('modalBtnOk');
+            const btnCancel = document.getElementById('modalBtnCancel');
+            
+            document.getElementById('alertTitle').innerText = title;
+            document.getElementById('alertMessage').innerText = message;
+            
+            if (type === 'success') {
+                iconEl.innerHTML = '<i class="ri-checkbox-circle-fill" style="color: #25C953;"></i>';
+            } else if (type === 'error') {
+                iconEl.innerHTML = '<i class="ri-error-warning-fill" style="color: #FE2C55;"></i>';
+            } else if (type === 'warning') {
+                iconEl.innerHTML = '<i class="ri-alert-fill" style="color: #FFC107;"></i>';
+            } else {
+                iconEl.innerHTML = '<i class="ri-information-fill" style="color: #FE2C55;"></i>';
+            }
+
+            if (isConfirm) {
+                btnCancel.style.display = 'block';
+                btnOk.innerText = 'Yes, Proceed';
+            } else {
+                btnCancel.style.display = 'none';
+                btnOk.innerText = 'Okay';
+            }
+
+            modal.style.display = 'flex';
+            modalResolver = resolve;
+        });
+    }
+
+    function closeAlertModal(confirmed = false) {
+        document.getElementById('alertModal').style.display = 'none';
+        if (modalResolver) {
+            modalResolver(confirmed);
+            modalResolver = null;
+        }
+    }
+
+    let searchResultData = null;
+
+    async function searchUser() {
+        const input = document.getElementById('usernameInput');
+        const btn = document.getElementById('searchBtn');
+        const resultBox = document.getElementById('searchResult');
+        const suggestionsBox = document.getElementById('suggestionsBox');
+        const msgDiv = document.getElementById('verifyMessage');
+        
+        let username = input.value.trim().replace('@', '');
+        if (!username) return;
+
+        resultBox.classList.remove('visible');
+        suggestionsBox.classList.remove('visible');
+        msgDiv.style.display = 'none';
+        btn.disabled = true;
+        btn.innerText = 'Searching...';
+
+        try {
+            btn.innerText = 'Connecting...';
+            const response = await fetch(`api.php?username=${encodeURIComponent(username)}`);
+            const data = await response.json();
+
+            if (data.success && data.users && data.users.length > 0) {
+                 renderSearchResults(data.users);
+            } else {
+                throw new Error(data.error || 'User not found. Please try again.');
+            }
+
+        } catch (err) {
+            console.warn("Backend API failed:", err);
+            const msgDiv = document.getElementById('verifyMessage');
+            msgDiv.innerText = err.message || 'User not found. Please try again.';
+            msgDiv.style.display = 'flex';
+            msgDiv.style.color = 'red';
+        } finally {
+            btn.disabled = false;
+            btn.innerText = 'Search';
+        }
+    }
+
+    function showSearchResult(data) {
+        document.getElementById('resultAvatar').src = data.avatar;
+        document.getElementById('resultName').innerText = data.name;
+        document.getElementById('resultUsername').innerText = data.username;
+        
+        document.getElementById('inputGroup').style.display = 'flex';
+        document.getElementById('suggestionsBox').classList.remove('visible');
+        
+        const customUploadBtn = document.getElementById('customUploadBtn');
+        if(customUploadBtn) customUploadBtn.style.display = 'block';
+        
+        document.getElementById('searchResult').classList.add('visible');
+        
+        searchResultData = data;
+    }
+
+    function renderSearchResults(users) {
+        const list = document.getElementById('suggestionsList');
+        list.innerHTML = ''; 
+        const header = document.querySelector('.suggestion-header');
+        header.innerText = 'Select Account';
+        header.style.color = '#161823';
+        header.style.fontWeight = '700';
+
+        users.forEach(u => {
+             const item = createSuggestionItem(u.name, u.username, u.avatar);
+             list.appendChild(item);
+        });
+
+        document.getElementById('suggestionsBox').classList.add('visible');
+        document.getElementById('searchResult').classList.remove('visible');
+    }
+
+    function createSuggestionItem(name, username, avatar) {
+        const item = document.createElement('div');
+        item.className = 'suggestion-item';
+        item.onclick = () => selectSuggestion(name, username, avatar);
+        
+        item.innerHTML = `
+             <img src="${avatar}" class="suggestion-avatar">
+            <div style="text-align: left;">
+                <div style="font-weight: 700; color: var(--text-main); font-size: 15px;">${username}</div> 
+                <div style="font-size: 13px; color: var(--text-sec);">${name}</div>
+            </div>
+        `;
+        return item;
+    }
+
+    function selectSuggestion(name, username, avatar) {
+         searchResultData = {
+            username: username,
+            name: name,
+            avatar: avatar
+        };
+        
+        document.getElementById('inputGroup').style.display = 'flex'; 
+        document.getElementById('suggestionsBox').classList.remove('visible'); 
+        
+        showSearchResult(searchResultData);
+    }
+    
+    function connectUser() {
+        if (!searchResultData) return;
+        
+        // Update Global State
+        connectedUser = searchResultData;
+        
+        // Save to Persistence
+        localStorage.setItem('connectedUser', JSON.stringify(connectedUser));
+        
+        // Update UI
+        document.getElementById('finalAvatar').src = connectedUser.avatar;
+        document.getElementById('finalName').innerText = connectedUser.name;
+        
+        document.getElementById('userVerifyBox').style.display = 'none'; 
+        document.getElementById('searchResult').classList.remove('visible'); 
+        document.getElementById('verifiedState').style.display = 'flex'; 
+        
+        document.getElementById('modalAccountName').innerText = connectedUser.username;
+        
+        const msg = document.getElementById('verifyMessage');
+        msg.innerHTML = '<i class="ri-checkbox-circle-fill"></i> Account Connected Successfully';
+        msg.style.display = 'flex';
+        setTimeout(() => { msg.style.display = 'none'; }, 3000);
+    }
+    
+    function showConnectedState(userData, suppressToast = false) {
+        // Update Connected UI
+        document.getElementById('finalAvatar').src = userData.avatar;
+        document.getElementById('finalName').innerText = userData.name;
+        
+        // Hide Search, Show Connected
+        document.getElementById('userVerifyBox').style.display = 'none'; // Hide input box container
+        document.getElementById('searchResult').classList.remove('visible'); // Hide search result card
+        document.getElementById('verifiedState').style.display = 'flex'; // Show connected state
+        
+        // Update Modal
+        document.getElementById('modalAccountName').innerText = userData.username;
+        
+        // Update verification message
+        // Update verification message
+        if (!suppressToast) {
+            const msg = document.getElementById('verifyMessage');
+            msg.innerHTML = '<i class="ri-checkbox-circle-fill"></i> Account Connected Successfully';
+            msg.style.display = 'flex';
+            setTimeout(() => { msg.style.display = 'none'; }, 3000);
+        }
+    }
+
+    function unlinkUser() {
+        // Clear State
+        connectedUser = {
+            name: '',
+            avatar: '',
+            username: ''
+        };
+        searchResultData = null;
+        
+        // Clear Persistence
+        localStorage.removeItem('connectedUser');
+        
+        // Reset UI
+        document.getElementById('verifiedState').style.display = 'none';
+        document.getElementById('userVerifyBox').style.display = 'flex'; // Show input box container
+        document.getElementById('usernameInput').value = ''; // Clear input
+        document.getElementById('searchResult').classList.remove('visible');
+    }
+    // Initialize
+    renderGrid();
+    
+    // Auto-Connect if saved
+    (function initConnectedUser() {
+        const saved = localStorage.getItem('connectedUser');
+        if (saved) {
+            try {
+                connectedUser = JSON.parse(saved);
+                showConnectedState(connectedUser, true); // true = suppress toast logic needs to be added to function
+            } catch (e) {
+                console.error("Failed to restore user", e);
+                localStorage.removeItem('connectedUser');
+            }
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('payment_success') === 'true') {
+            setTimeout(() => {
+                showAlert('Payment Successful!', 'Your transaction was successful and coins will be credited.', 'success', false);
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }, 500);
+        }
+    })();
+
+    // Register PWA Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js')
+                .then(registration => {
+                    console.log('PWA ServiceWorker registered successfully', registration.scope);
+                })
+                .catch(err => {
+                    console.error('PWA ServiceWorker registration failed: ', err);
+                });
+        });
+    }
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2030 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Affiliate Dashboard | Cheaper360</title>
+    <link rel="icon" href="img/icone.ico"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link href="mobile-responsive.css" rel="stylesheet">
+    <style>
+        /* Core Variables */
+        :root {
+            --primary: #FE2C55;
+            --primary-hover: #E6284C;
+            --bg-body: #F8F9FA;
+            --bg-card: #FFFFFF;
+            --text-main: #161823;
+            --text-sec: #8A8B91;
+            --border: #E8E8E8;
+            --success: #25C953;
+            --danger: #FF4C4C;
+            --bg-input: #F1F1F2;
+            --surface-hover: #F1F1F2;
+            --shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #121212;
+            --bg-card: #1E1E1E;
+            --text-main: #FFFFFF;
+            --text-sec: #A1A1A1;
+            --border: #2F2F2F;
+            --bg-input: #2C2C2C;
+            --surface-hover: #2C2C2C;
+            --shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        /* Reset & Base */
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            transition: background 0.3s, color 0.3s;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--bg-card);
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            border-bottom: 1px solid var(--border);
+            position: relative; /* Changed from sticky to avoid rendering bugs */
+            z-index: 100;
+        }
+        
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            font-size: 20px;
+            color: var(--text-main);
+            text-decoration: none;
+        }
+        .brand span { color: var(--primary); }
+
+        .nav-actions { display: flex; gap: 16px; align-items: center; }
+        .user-info { font-size: 14px; color: var(--text-sec); font-weight: 500; display: flex; align-items: center; gap: 8px;}
+        
+        .btn-link {
+            color: var(--text-main);
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: 0.2s;
+            display: flex; align-items: center; gap: 8px;
+            cursor: pointer;
+        }
+        .btn-link:hover { background: var(--surface-hover); }
+
+        .theme-toggle {
+            background: var(--surface-hover);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: 0.2s;
+        }
+        .theme-toggle:hover { background: var(--border); }
+
+        /* Dashboard Layout */
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+        }
+
+        /* Profile Card (Sidebar) */
+        .profile-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            height: fit-content;
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--surface-hover);
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+        .profile-name { font-weight: 700; font-size: 18px; margin-bottom: 4px; }
+        .profile-email { color: var(--text-sec); font-size: 14px; margin-bottom: 20px; word-break: break-all; }
+        
+        .divider { width: 100%; height: 1px; background: var(--border); margin: 24px 0; }
+        
+        .balance-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-sec); font-weight: 700; }
+        .balance-amount { font-size: 32px; font-weight: 800; color: var(--text-main); margin: 8px 0 24px; letter-spacing: -1px;}
+
+        .btn-primary, .btn-secondary {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        .btn-secondary { background: var(--surface-hover); color: var(--text-main); }
+        .btn-secondary:hover { background: var(--border); }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: var(--bg-card);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-icon {
+            position: absolute;
+            right: 20px; top: 20px;
+            font-size: 24px;
+            color: var(--surface-hover);
+            opacity: 0.5;
+            transform: scale(1.5);
+        }
+        .stat-value { font-size: 28px; font-weight: 800; color: var(--text-main); z-index: 1; }
+        .stat-title { font-size: 14px; color: var(--text-sec); font-weight: 500; z-index: 1; display: flex; align-items: center; gap: 6px; }
+
+        /* Referral Box */
+        .ref-box {
+            background: linear-gradient(135deg, #161823 0%, #2F3346 100%);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .ref-box::after {
+            content: ''; position: absolute; right: -20px; top: -40px;
+            width: 150px; height: 150px; background: rgba(255,255,255,0.05); border-radius: 50%;
+        }
+        .ref-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .ref-desc { font-size: 14px; opacity: 0.8; max-width: 500px; line-height: 1.5; margin-bottom: 16px; }
+        
+        .ref-input-group { display: flex; gap: 10px; background: rgba(255,255,255,0.1); padding: 4px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
+        .ref-input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            color: white;
+            font-family: monospace;
+            font-size: 14px;
+            outline: none;
+        }
+        .btn-copy-link {
+            background: white;
+            color: #161823;
+            border: none;
+            padding: 0 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.1s;
+        }
+        .btn-copy-link:active { transform: scale(0.95); }
+
+        /* Tables */
+        .table-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        .section-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .section-title { font-weight: 700; font-size: 16px; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 14px 24px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background: var(--surface-hover); color: var(--text-sec); font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px; }
+        td { font-size: 14px; color: var(--text-main); font-weight: 500; }
+        tr:last-child td { border-bottom: none; }
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex; align-items: center; gap: 4px;
+        }
+        .status-paid { background: rgba(37, 201, 83, 0.1); color: var(--success); }
+        .status-pending { background: rgba(255, 193, 7, 0.1); color: #FFC107; }
+
+        /* Global Modals */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: none; /* Flex when active */
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+        .modal-content {
+            background: var(--bg-card);
+            width: 100%;
+            max-width: 400px;
+            border-radius: 16px;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            animation: modalFadeIn 0.2s ease-out;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        
+        .modal-title { font-size: 20px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .modal-input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-input);
+            color: var(--text-main);
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+        }
+        .modal-input:focus { border-color: var(--primary); }
+
+        .btn-confirm {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 15px;
+            transition: 0.2s;
+        }
+        .btn-confirm:hover { background: var(--primary-hover); }
+
+        /* Settings Modal Specifics */
+        .tab-menu { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+        .tab-btn {
+            flex: 1;
+            padding: 14px;
+            background: none;
+            border: none;
+            border-bottom: 2px solid transparent;
+            font-weight: 600;
+            color: var(--text-sec);
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
+        .tab-btn:hover { background: var(--surface-hover); }
+        .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .tab-content { display: none; animation: fadeIn 0.3s; }
+        
+        .avatar-large {
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            background: var(--surface-hover);
+            margin: 0 auto;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: var(--primary);
+            border: 2px solid var(--border);
+            cursor: pointer;
+            position: relative;
+        }
+        .avatar-large:hover::after {
+            content: 'Change'; position: absolute; bottom: 0; left: 0; right: 0;
+            background: rgba(0,0,0,0.5); color: white; font-size: 10px; padding: 4px;
+        }
+        
+        .avatar-picker-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+        
+        .avatar-option {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--surface-hover);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .avatar-option:hover {
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+        
+        .avatar-option.selected {
+            border-color: var(--primary);
+            background: rgba(254, 44, 85, 0.1);
+        }
+        
+        .form-label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-sec); }
+        
+        /* Switch Toggle */
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--success); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        /* Loader */
+        .loader {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid var(--text-sec);
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .toast {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            min-width: 300px;
+            max-width: 400px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .toast.hiding {
+            animation: slideOut 0.3s ease-in forwards;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+        
+        .toast-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .toast-icon.success {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22C55E;
+        }
+        
+        .toast-icon.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #EF4444;
+        }
+        
+        .toast-icon.info {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3B82F6;
+        }
+        
+        .toast-content {
+            flex: 1;
+        }
+        
+        .toast-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--text-main);
+            margin-bottom: 2px;
+        }
+        
+        .toast-message {
+            font-size: 13px;
+            color: var(--text-sec);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .profile-card { position: static; margin-bottom: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="dashboard.html" class="brand">
+        <span>Cheaper</span>360
+    </a>
+    <div class="nav-actions">
+        <span class="user-info" id="navEmail"><i class="ri-user-line"></i> Loading...</span>
+        
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+            <i id="icon-moon" class="ri-moon-clear-fill" style="display:none;"></i>
+            <i id="icon-sun" class="ri-sun-fill"></i>
+        </button>
+
+        <a href="auth.php?action=logout" class="btn-link"><i class="ri-logout-box-r-line"></i> Logout</a>
+    </div>
+</nav>
+
+<!-- Sales Notifications (Bottom Left) -->
+<div id="salesNotificationContainer" style="position: fixed; bottom: 20px; left: 20px; z-index: 1000; pointer-events: none;"></div>
+
+<script>
+// Sales Notification System
+const salesData = {
+    names: [
+        // Pakistani
+        "Ali K.", "Fatima R.", "Bilal A.", "Zara H.", "Omer S.",
+        // Indian
+        "Rahul M.", "Priya S.", "Amit K.", "Sneha P.", "Vikram R.",
+        // Spanish
+        "Mateo L.", "Sofia G.", "Diego R.", "Valentina M.", "Lucas F.",
+        // Chinese
+        "Wei Z.", "Li Y.", "Chen X.", "Yan W.", "Zhang H.",
+        // American
+        "James W.", "Emma B.", "Michael T.", "Olivia D.", "William C.",
+        // British
+        "Oliver H.", "Charlotte E.", "Harry P.", "Isla T.", "George B."
+    ],
+    actions: ["purchased Plan A", "upgraded account", "withdrew $50", "earned $120", "referenced a friend"],
+    avatars: ['👦', '👨', '👴', '👧', '👩', '👵', '😎', '🚀', '💎', '🔥']
+};
+
+function showSalesNotification() {
+    const container = document.getElementById('salesNotificationContainer');
+    if (!container) return;
+
+    // Random Data
+    const name = salesData.names[Math.floor(Math.random() * salesData.names.length)];
+    const action = salesData.actions[Math.floor(Math.random() * salesData.actions.length)];
+    const avatar = salesData.avatars[Math.floor(Math.random() * salesData.avatars.length)];
+    const timeAgo = Math.floor(Math.random() * 5) + 1; // 1-5 mins ago
+
+    // Create Notification Element
+    const notif = document.createElement('div');
+    notif.className = 'sales-notif';
+    notif.innerHTML = `
+        <div class="sales-notif-avatar">${avatar}</div>
+        <div class="sales-notif-content">
+            <div class="sales-notif-title">${name} <span style="opacity:0.7; font-weight:400; font-size:11px;">Just now</span></div>
+            <div class="sales-notif-desc">${action}</div>
+        </div>
+    `;
+
+    container.appendChild(notif);
+
+    // Animate In/Out
+    setTimeout(() => {
+        notif.style.opacity = '1';
+        notif.style.transform = 'translateY(0)';
+    }, 100);
+
+    setTimeout(() => {
+        notif.style.opacity = '0';
+        notif.style.transform = 'translateY(20px)';
+        setTimeout(() => notif.remove(), 500);
+    }, 4000); // Show for 4 seconds
+}
+
+// Start Random Loop (every 8-15 seconds)
+function startSalesLoop() {
+    // Initial delay
+    setTimeout(() => {
+        showSalesNotification();
+        displayNextSale();
+    }, 2000);
+}
+
+function displayNextSale() {
+    const delay = Math.floor(Math.random() * (15000 - 8000 + 1)) + 8000;
+    setTimeout(() => {
+        showSalesNotification();
+        displayNextSale();
+    }, delay);
+}
+
+document.addEventListener('DOMContentLoaded', startSalesLoop);
+</script>
+
+<style>
+.sales-notif {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+    width: 280px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: auto;
+}
+
+.sales-notif-avatar {
+    width: 36px;
+    height: 36px;
+    background: var(--surface-hover);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.sales-notif-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.sales-notif-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 8px;
+}
+
+.sales-notif-desc {
+    font-size: 12px;
+    color: var(--text-sec);
+    margin-top: 2px;
+}
+
+    /* Professional Input Styles - FORCED */
+    .wallet-input {
+        width: 100% !important;
+        height: 50px !important;
+        padding: 0 16px !important;
+        background: #FFFFFF !important;
+        border: 2px solid #E5E7EB !important;
+        border-radius: 12px !important;
+        color: #111827 !important;
+        font-size: 14px !important;
+        font-family: inherit !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+        transition: all 0.2s ease !important;
+        outline: none !important;
+        box-sizing: border-box !important;
+        display: block !important;
+    }
+    .wallet-input:focus {
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 4px rgba(37, 244, 238, 0.1) !important;
+        background: #FFFFFF !important;
+    }
+    .wallet-input::placeholder {
+        color: #9CA3AF !important;
+    }
+</style>
+
+<div class="container">
+    <!-- Sidebar -->
+    <div class="profile-card">
+        <div class="profile-avatar" id="sidebarAvatar">
+            <span id="sidebarAvatarInitial">U</span>
+        </div>
+        <div class="profile-name" id="profileName">...</div>
+        <div class="profile-email" id="profileEmail">...</div>
+        
+        <div class="divider"></div>
+        
+        <div class="balance-label">Available Commission</div>
+        <div class="balance-amount" id="mainBalance">---</div>
+        
+        <button class="btn-primary" onclick="openWithdrawModal()"><i class="ri-bank-card-fill"></i> Request Withdrawal</button>
+        <div style="font-size: 12px; color: var(--text-sec); margin-top: 12px; line-height: 1.4;">
+            <i class="ri-time-line" style="vertical-align: middle;"></i> Processed within 24h
+        </div>
+        
+        <div class="divider"></div>
+        <button class="btn-secondary" onclick="openSettingsModal()"><i class="ri-settings-3-fill"></i> Account Settings</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Referral Links -->
+        <div class="ref-container" style="display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); margin-bottom: 24px;">
+            <!-- Sales Link -->
+            <div class="ref-box" style="margin-bottom: 0;">
+                <div class="ref-title"><i class="ri-shopping-cart-fill"></i> Direct Sales Link</div>
+                <div class="ref-desc">Share this link to sell coins. You earn <strong style="color: #25F4EE;">25% commission</strong> on every purchase.</div>
+                
+                <div class="ref-input-group">
+                    <input type="text" readonly class="ref-input" id="refLinkSales" value="Loading...">
+                    <button class="btn-copy-link" onclick="copyLink('refLinkSales')"><i class="ri-file-copy-line"></i> Copy</button>
+                </div>
+            </div>
+
+            <!-- Recruit Link -->
+            <div class="ref-box" style="margin-bottom: 0; border-color: rgba(254, 44, 85, 0.3);">
+                <div class="ref-title"><i class="ri-user-add-fill"></i> Recruit Vendor Link</div>
+                <div class="ref-desc">Invite new vendors. You earn <strong style="color: #FE2C55;">10% override</strong> on their sales forever.</div>
+                
+                <div class="ref-input-group">
+                    <input type="text" readonly class="ref-input" id="refLinkRecruit" value="Loading...">
+                    <button class="btn-copy-link" onclick="copyLink('refLinkRecruit')"><i class="ri-file-copy-line"></i> Copy</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loyalty Rewards Section -->
+        <style>
+        .loyalty-section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 32px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+        
+        .loyalty-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .loyalty-header h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+            color: var(--text-main);
+        }
+        
+        .tier-badge {
+            background: linear-gradient(135deg, #FE2C55 0%, #E6284C 100%);
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 99px;
+            font-weight: 700;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tier-badge.silver {
+            background: linear-gradient(135deg, #C0C0C0 0%, #A8A8A8 100%);
+        }
+        
+        .tier-badge.gold {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: #000;
+        }
+        
+        .tier-badge.platinum {
+            background: linear-gradient(135deg, #E5E4E2 0%, #B9B9B9 100%);
+            color: #000;
+        }
+        
+        .points-display {
+            text-align: center;
+            margin: 32px 0;
+        }
+        
+        .points-number {
+            font-size: 56px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FE2C55 0%, #25F4EE 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        
+        .points-label {
+            color: var(--text-sec);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .tier-progress {
+            margin: 32px 0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: var(--surface-hover);
+            border-radius: 99px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #FE2C55 0%, #25F4EE 100%);
+            border-radius: 99px;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-sec);
+            font-size: 13px;
+        }
+        
+        .progress-label span {
+            color: #FE2C55;
+            font-weight: 600;
+        }
+        
+        .loyalty-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 24px 0;
+        }
+        
+        .loyalty-stat {
+            background: var(--surface-hover);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        
+        .loyalty-stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+        
+        .loyalty-stat-label {
+            color: var(--text-sec);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .loyalty-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+        
+        .btn-redeem, .btn-earn {
+            flex: 1;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .btn-redeem {
+            background: #FE2C55;
+            color: #fff;
+        }
+        
+        .btn-redeem:hover {
+            background: #E6284C;
+            transform: translateY(-2px);
+        }
+        
+        .btn-earn {
+            background: var(--surface-hover);
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+        
+        .btn-earn:hover {
+            background: var(--border);
+        }
+        
+        .benefits-list {
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .benefits-list h4 {
+            font-size: 16px;
+            margin-bottom: 16px;
+            color: var(--text-main);
+        }
+        
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--surface-hover);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .benefit-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(254, 44, 85, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FE2C55;
+            font-size: 16px;
+        }
+        
+        .benefit-text {
+            flex: 1;
+            color: var(--text-main);
+            font-size: 14px;
+        }
+        
+        .redeem-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .redeem-modal.show {
+            display: flex;
+        }
+        
+        .redeem-content {
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid var(--border);
+        }
+        
+        .redeem-content h3 {
+            margin: 0 0 24px 0;
+            font-size: 24px;
+            color: var(--text-main);
+        }
+        
+        .redeem-option {
+            background: var(--surface-hover);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .redeem-option:hover {
+            background: var(--border);
+            border-color: #FE2C55;
+        }
+        
+        .redeem-option-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+        
+        .redeem-option-desc {
+            color: var(--text-sec);
+            font-size: 14px;
+        }
+        
+        .redeem-option-cost {
+            color: #FE2C55;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+        </style>
+        
+        <div class="loyalty-section">
+            <div class="loyalty-header">
+                <h3><i class="ri-gift-fill" style="color: #FE2C55;"></i> Loyalty Rewards</h3>
+                <div class="tier-badge" id="tierBadge">
+                    <i class="ri-medal-fill"></i> Bronze
+                </div>
+            </div>
+            
+            <div class="points-display">
+                <div class="points-number" id="totalPoints">0</div>
+                <div class="points-label">Total Points</div>
+            </div>
+            
+            <div class="tier-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="tierProgress" style="width: 0%"></div>
+                </div>
+                <div class="progress-label">
+                    <span>Current Tier</span>
+                    <span id="pointsToNext">1,000 points to Silver</span>
+                </div>
+            </div>
+            
+            <div class="loyalty-grid">
+                <div class="loyalty-stat">
+                    <div class="loyalty-stat-value" id="lifetimePoints">0</div>
+                    <div class="loyalty-stat-label">Lifetime Points</div>
+                </div>
+                <div class="loyalty-stat">
+                    <div class="loyalty-stat-value" id="pointsMultiplier">1.0x</div>
+                    <div class="loyalty-stat-label">Points Multiplier</div>
+                </div>
+                <div class="loyalty-stat">
+                    <div class="loyalty-stat-value" id="tierDiscount">0%</div>
+                    <div class="loyalty-stat-label">Tier Discount</div>
+                </div>
+            </div>
+            
+            <div class="loyalty-actions">
+                <button class="btn-redeem" onclick="openRedeemModal()">
+                    <i class="ri-money-dollar-circle-fill"></i> Redeem Points
+                </button>
+                <button class="btn-earn" onclick="showEarnOptions()">
+                    <i class="ri-star-fill"></i> Earn More
+                </button>
+            </div>
+            
+            <div class="benefits-list" id="tierBenefits">
+                <h4>Your Tier Benefits</h4>
+                <!-- Benefits will be loaded dynamically -->
+            </div>
+        </div>
+        
+        <!-- Redeem Modal -->
+        <div class="redeem-modal" id="redeemModal">
+            <div class="redeem-content">
+                <h3>Redeem Your Points</h3>
+                <p style="color: #A1A1A1; margin-bottom: 24px;">Available: <span id="availablePoints" style="color: #FE2C55; font-weight: 700;">0</span> points</p>
+                
+                <div class="redeem-option" onclick="redeemPoints(500, 'discount')">
+                    <div class="redeem-option-title">$5 Discount</div>
+                    <div class="redeem-option-desc">Use on your next purchase</div>
+                    <div class="redeem-option-cost">500 points</div>
+                </div>
+                
+                <div class="redeem-option" onclick="redeemPoints(1000, 'discount')">
+                    <div class="redeem-option-title">$10 Discount</div>
+                    <div class="redeem-option-desc">Use on your next purchase</div>
+                    <div class="redeem-option-cost">1,000 points</div>
+                </div>
+                
+                <div class="redeem-option" onclick="redeemPoints(2000, 'discount')">
+                    <div class="redeem-option-title">$20 Discount</div>
+                    <div class="redeem-option-desc">Use on your next purchase</div>
+                    <div class="redeem-option-cost">2,000 points</div>
+                </div>
+                
+                <button onclick="closeRedeemModal()" style="width: 100%; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 8px; margin-top: 16px; cursor: pointer;">
+                    Cancel
+                </button>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="ri-cursor-fill stat-icon"></i>
+                <div class="stat-value" id="statClicks">0</div>
+                <div class="stat-title"><i class="ri-mouse-line"></i> Realtime Clicks</div>
+            </div>
+            <div class="stat-card">
+                <i class="ri-group-fill stat-icon"></i>
+                <div class="stat-value" id="statReferrals">0</div>
+                <div class="stat-title"><i class="ri-user-add-line"></i> Total Referrals</div>
+            </div>
+            <div class="stat-card">
+                <i class="ri-money-dollar-circle-fill stat-icon"></i>
+                <div class="stat-value" id="statEarnings">$0.00</div>
+                <div class="stat-title"><i class="ri-wallet-3-line"></i> Total Earnings</div>
+            </div>
+        </div>
+
+        <!-- History -->
+        <div class="table-card">
+            <div class="section-header">
+                <div class="section-title">Recent Commissions</div>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>User</th>
+                        <th>Purchase</th>
+                        <th>Commission</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="txTableBody">
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 50px;">
+                            <div class="loader"></div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Alert/Confirm Modal -->
+<div id="alertModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 340px; text-align: center; padding: 32px;">
+        <div id="alertIcon" style="font-size: 56px; margin-bottom: 20px; line-height: 1;"></div>
+        <h3 id="alertTitle" class="modal-title" style="justify-content: center; font-size: 20px; margin-bottom: 12px;">Notice</h3>
+        <p id="alertMessage" style="color: var(--text-sec); font-size: 15px; margin-bottom: 28px; line-height: 1.6;"></p>
+        
+        <div id="modalActions" style="display: flex; gap: 12px;">
+            <button id="modalBtnCancel" onclick="closeAlertModal()" class="btn-secondary" style="display: none; flex: 1; padding: 12px;">Cancel</button>
+            <button id="modalBtnOk" onclick="closeAlertModal(true)" class="btn-confirm" style="flex: 1; padding: 12px;">Okay</button>
+        </div>
+    </div>
+</div>
+
+<!-- Withdraw Modal -->
+<div id="withdrawModal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Request Withdrawal</h3>
+            <button class="modal-close" onclick="closeWithdrawModal()"><i class="ri-close-line"></i></button>
+        </div>
+        
+        <div class="form-group">
+            <label>Amount (USD)</label>
+            <div style="position: relative;">
+                <span style="position: absolute; left: 16px; top: 14px; color: var(--text-sec);">$</span>
+                <input type="number" id="wdAmount" value="0.00" style="padding-left: 30px;" step="0.01">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label>Payout To</label>
+            <div style="padding: 12px; background: var(--bg-input); border-radius: 8px; border: 1px solid var(--border); display: flex; align-items: center; gap: 10px;">
+                <img src="img/usdt.png" style="width: 20px; height: 20px;" alt="USDT">
+                <div>
+                    <div style="font-weight: 600; font-size: 14px;">USDT (TRC20)</div>
+                    <div style="font-size: 12px; color: var(--text-sec); font-family: monospace;" id="wdDetailsDisplay">Checking...</div>
+                </div>
+            </div>
+        </div>
+        
+        <button class="btn-primary" style="width: 100%; margin-top: 10px;" onclick="submitWithdraw()">Confirm Request</button>
+    </div>
+</div>
+
+<!-- Settings Modal -->
+<div id="settingsModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 500px; padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+        <div style="background: var(--surface-hover); padding: 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between;">
+            <h3 class="modal-title" style="margin: 0;"><i class="ri-settings-3-fill"></i> Settings</h3>
+            <button onclick="closeSettingsModal()" style="background: none; border: none; font-size: 24px; color: var(--text-sec); cursor: pointer;">&times;</button>
+        </div>
+        
+        <div class="tab-menu" style="margin: 0;">
+            <button class="tab-btn active" onclick="switchTab('tabProfile')"><i class="ri-user-fill"></i> Profile</button>
+            <button class="tab-btn" onclick="switchTab('tabSecurity')"><i class="ri-shield-keyhash-line"></i> Security</button>
+            <button class="tab-btn" onclick="switchTab('tabPayout')"><i class="ri-wallet-3-line"></i> Payout</button>
+        </div>
+
+        <div style="padding: 24px; overflow-y: auto;">
+            <!-- Profile Tab -->
+            <div id="tabProfile" class="tab-content" style="display: block;">
+                <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 24px;">
+                    <div class="avatar-large" id="settingsAvatar">
+                        <span id="settingsAvatarInitials">U</span>
+                    </div>
+                    <p style="font-size: 12px; color: var(--text-sec); margin-top: 8px;">Choose your avatar</p>
+                </div>
+                
+                <div style="margin-bottom: 24px;">
+                    <label class="form-label">Select Avatar</label>
+                    <div class="avatar-picker-grid">
+                        <!-- Males -->
+                        <div class="avatar-option" onclick="selectAvatar('👦')" data-avatar="👦" title="Boy">👦</div>
+                        <div class="avatar-option" onclick="selectAvatar('👨')" data-avatar="👨" title="Man">👨</div>
+                        <div class="avatar-option" onclick="selectAvatar('👴')" data-avatar="👴" title="Old Man">👴</div>
+                        
+                        <!-- Females -->
+                        <div class="avatar-option" onclick="selectAvatar('👧')" data-avatar="👧" title="Girl">👧</div>
+                        <div class="avatar-option" onclick="selectAvatar('👩')" data-avatar="👩" title="Woman">👩</div>
+                        <div class="avatar-option" onclick="selectAvatar('👵')" data-avatar="👵" title="Old Woman">👵</div>
+                        
+                        <!-- Extras -->
+                        <div class="avatar-option" onclick="selectAvatar('😎')" data-avatar="😎" title="Cool">😎</div>
+                        <div class="avatar-option" onclick="selectAvatar('👤')" data-avatar="👤" title="Neutral">👤</div>
+                        <div class="avatar-option" onclick="selectAvatar('🚀')" data-avatar="🚀" title="Rocket">🚀</div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" id="settingsUsername" class="modal-input" readonly style="opacity: 0.7;">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" id="settingsEmail" class="modal-input" readonly style="opacity: 0.7;">
+                </div>
+                
+                <button onclick="saveAvatarChanges()" class="btn-confirm" style="width: 100%; margin-top: 16px;">
+                    <i class="ri-save-line"></i> Save Changes
+                </button>
+            </div>
+
+            <!-- Security Tab -->
+            <div id="tabSecurity" class="tab-content">
+                <div style="background: var(--surface-hover); padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+                    <h4 style="margin: 0 0 12px 0;">Change Password</h4>
+                    <input type="password" id="secOldPass" class="modal-input" placeholder="Current Password">
+                    <input type="password" id="secNewPass" class="modal-input" placeholder="New Password">
+                    <button onclick="savePassword()" class="btn-confirm" style="margin-top: 8px;">Update Password</button>
+                </div>
+
+                <div style="background: var(--surface-hover); padding: 16px; border-radius: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h4 style="margin: 0;">2FA Security</h4>
+                            <p style="margin: 4px 0 0; font-size: 12px; color: var(--text-sec);">Google Authenticator</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="toggle2FA" onchange="toggle2FA()">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+
+                    <div id="setup2FA" style="border-top: 1px solid var(--border); margin-top: 16px; padding-top: 16px; display: none;">
+                        <p style="font-size: 13px; margin-bottom: 12px;">1. Scan QR Code</p>
+                        <div style="text-align: center; margin-bottom: 16px;">
+                            <img id="qrImage" src="" width="120" height="120" style="background: white; padding: 4px; border-radius: 4px;">
+                        </div>
+                        <p style="font-size: 13px; margin-bottom: 8px;">2. Verify Code</p>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="otpInput" class="modal-input" placeholder="000 000" style="text-align: center; letter-spacing: 2px;">
+                            <button onclick="verifyAndEnable2FA()" class="btn-confirm" style="width: auto;">Verify</button>
+                        </div>
+                        <div style="font-size: 11px; text-align: center; margin-top: 8px; color: var(--text-sec);">
+                            Secret: <span id="manualSecret" style="font-family: monospace;">...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                <!-- Payout Tab (Redesigned) -->
+            <div id="tabPayout" class="tab-content" style="display: none;">
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <div style="width: 70px; height: 70px; background: linear-gradient(135deg, rgba(37, 244, 238, 0.15), rgba(37, 244, 238, 0.05)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; color: #25F4EE; font-size: 32px; border: 1px solid rgba(37, 244, 238, 0.2); box-shadow: 0 4px 12px rgba(37, 244, 238, 0.1);">
+                        <i class="ri-wallet-3-line"></i>
+                    </div>
+                    <h3 style="margin: 0; font-size: 18px; font-weight: 700;">Payout Settings</h3>
+                    <p style="color: var(--text-sec); font-size: 13px; margin: 6px 0 0;">Manage your withdrawal wallets.</p>
+                </div>
+                
+                <!-- Saved Wallets List -->
+                <div id="walletsList" style="margin-bottom: 20px;">
+                    <div style="text-align: center; padding: 20px; color: var(--text-sec);">
+                        <i class="ri-loader-4-line ri-spin"></i> Loading wallets...
+                    </div>
+                </div>
+
+                <!-- Add New Wallet Section -->
+                <div id="addWalletSection" style="background: var(--surface-hover); padding: 16px; border-radius: 12px; border: 1px solid var(--border);">
+                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0; cursor: pointer;" onclick="toggleAddWalletForm()">
+                        <label style="font-size: 13px; color: var(--text-sec); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; margin: 0;">Add New Wallet</label>
+                        <i id="addWalletIcon" class="ri-add-circle-fill" style="color: var(--primary); font-size: 24px; transition: transform 0.3s ease;"></i>
+                     </div>
+                     
+                     <div id="addWalletForm" style="display: none; margin-top: 24px; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 24px;">
+                        <div class="form-group" style="margin-bottom: 24px;">
+                            <label style="font-size: 13px; display: block; margin-bottom: 10px; color: var(--text-main); font-weight: 600;">Wallet Label <span style="color:var(--text-sec); font-weight:400; font-size:12px;">(e.g. Binance)</span></label>
+                            <input type="text" id="newWalletLabel" placeholder="My TRC20 Wallet" class="wallet-input">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 24px;">
+                            <label style="font-size: 13px; display: block; margin-bottom: 10px; color: var(--text-main); font-weight: 600;">TRC20 Address</label>
+                            <div style="position: relative;">
+                                <input type="text" id="payoutAddress" placeholder="T..." class="wallet-input" style="padding-right: 80px; font-family: 'Roboto Mono', monospace;">
+                                <button onclick="pasteAddress()" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(37, 244, 238, 0.1); border: 1px solid rgba(37, 244, 238, 0.2); padding: 6px 14px; border-radius: 8px; color: var(--primary); cursor: pointer; font-size: 11px; font-weight: 700; transition: all 0.2s;">PASTE</button>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 10px; margin-top: 15px;">
+                            <button class="btn-secondary" onclick="connectWeb3Wallet()" style="flex: 1; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" width="16" alt="MM"> Auto-Connect
+                            </button>
+                            <button class="btn-primary" onclick="addNewWallet()" style="flex: 1; font-size: 12px;">
+                                <i class="ri-save-line"></i> Save Wallet
+                            </button>
+                        </div>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        try {
+            initTheme();
+            loadDashboardData();
+            // Poll for realtime stats every 5 seconds
+            setInterval(loadDashboardData, 5000);
+        } catch(e) {
+            console.error("Critical Init Error:", e);
+        }
+    });
+
+    const formatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+    let currentSecret = null;
+
+    // --- Core Logic ---
+
+    function initTheme() {
+        try {
+            const saved = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', saved);
+            updateThemeIcons(saved);
+        } catch(e) { console.warn("Theme init failed", e); }
+    }
+
+    function toggleTheme() {
+        const html = document.documentElement;
+        const current = html.getAttribute('data-theme');
+        const next = current === 'light' ? 'dark' : 'light';
+        html.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        updateThemeIcons(next);
+    }
+
+    function updateThemeIcons(theme) {
+        const moon = document.getElementById('icon-moon');
+        const sun = document.getElementById('icon-sun');
+        if(theme === 'dark') {
+            moon.style.display = 'block';
+            sun.style.display = 'none';
+        } else {
+            moon.style.display = 'none';
+            sun.style.display = 'block';
+        }
+    }
+
+    async function loadDashboardData() {
+        try {
+            const res = await fetch('dashboard_api.php?t=' + Date.now());
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            
+            const rawText = await res.text();
+            if(!rawText) throw new Error("Empty Response");
+            
+            let data;
+            try { data = JSON.parse(rawText); } catch(e) { throw new Error("Invalid JSON"); }
+
+            if (data.error) {
+                if (data.error === "Unauthorized" || data.error.includes("login")) {
+                    window.location.href = 'auth.php?action=logout'; // Force logout on auth error
+                    return;
+                }
+                showAlert("Access Denied", data.error, "error");
+                return;
+            }
+
+            // Populate UI
+            const user = data.user;
+            const stats = data.stats;
+
+            // Nav & Sidebar
+            // Nav & Sidebar
+            const navEmailEl = document.getElementById('navEmail');
+            navEmailEl.textContent = ''; // Clear
+            const icon = document.createElement('i');
+            icon.className = 'ri-user-line';
+            navEmailEl.appendChild(icon);
+            navEmailEl.appendChild(document.createTextNode(' ' + user.email));
+            document.getElementById('profileName').innerText = user.username;
+            document.getElementById('profileEmail').innerText = user.email;
+            
+            // Store global user data for modals
+            window.currentUser = user;
+
+            // Pre-fill Payout Input if exists
+            if (user.payout && user.payout.address) {
+                // We don't pre-fill the "Add New" input anymore, as that's for NEW wallets.
+                // But we keep the data for logic if needed.
+            }
+            
+            // Avatar Handling
+            const initial = user.username.charAt(0).toUpperCase();
+            if (user.avatar) {
+                // Check if avatar is emoji or image URL
+                if (user.avatar.startsWith('http') || user.avatar.startsWith('uploads/')) {
+                    // Image avatar
+                    document.getElementById('sidebarAvatar').style.backgroundImage = `url(${user.avatar})`;
+                    document.getElementById('sidebarAvatarInitial').style.display = 'none';
+                    document.getElementById('settingsAvatar').style.backgroundImage = `url(${user.avatar})`;
+                    document.getElementById('settingsAvatarInitials').style.display = 'none';
+                } else {
+                    // Emoji avatar
+                    document.getElementById('sidebarAvatarInitial').textContent = user.avatar;
+                    document.getElementById('sidebarAvatarInitial').style.display = 'flex';
+                    document.getElementById('settingsAvatarInitials').textContent = user.avatar;
+                    document.getElementById('settingsAvatarInitials').style.display = 'flex';
+                }
+            } else {
+                 document.getElementById('sidebarAvatarInitial').innerText = initial;
+                 document.getElementById('settingsAvatarInitials').innerText = initial;
+            }
+
+            document.getElementById('mainBalance').innerText = formatter.format(data.balance);
+            
+            document.getElementById('statClicks').innerText = stats.clicks;
+            document.getElementById('statReferrals').innerText = stats.referrals;
+            document.getElementById('statEarnings').innerText = formatter.format(stats.total_earnings);
+
+            // Links
+            const domain = window.location.origin + window.location.pathname.replace('dashboard.html', '');
+            
+            // Sales Link (25%) -> app.html
+            const salesLink = `${domain}app.html?ref=${user.code}`;
+            document.getElementById('refLinkSales').value = salesLink;
+
+            // Recruit Link (10%) -> register.html
+            const recruitLink = `${domain}register.html?ref=${user.code}`;
+            document.getElementById('refLinkRecruit').value = recruitLink;
+
+            // IS 2FA Enabled?
+            if(user.is_2fa_enabled == 1) {
+                document.getElementById('toggle2FA').checked = true;
+                document.getElementById('setup2FA').innerHTML = `<p style="color:var(--success); font-weight:700; text-align:center; padding: 10px; background: rgba(37,201,83,0.1); border-radius: 8px;"><i class="ri-shield-check-fill"></i> 2FA is Active</p>`;
+                document.getElementById('setup2FA').style.display = 'block';
+            }
+
+            // Transactions
+            const tbody = document.getElementById('txTableBody');
+            tbody.innerHTML = '';
+            if (data.transactions.length === 0) {
+                 tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:30px; color:var(--text-sec);">No commissions yet.</td></tr>`;
+            } else {
+                data.transactions.forEach(tx => {
+                    const tr = document.createElement('tr');
+                    const isPaid = tx.status === 'completed';
+                    const statusClass = isPaid ? 'status-paid' : 'status-pending';
+                    const icon = isPaid ? '<i class="ri-check-double-line"></i>' : '<i class="ri-time-line"></i>';
+                    
+                    tr.innerHTML = `
+                         <td>${tx.date.substring(0, 10)}</td>
+                         <td>${maskEmail(tx.user)}</td>
+                         <td>${formatter.format(tx.amount)}</td>
+                         <td style="color: var(--success); font-weight: 700;">+${formatter.format(tx.comm)}</td>
+                         <td><span class="status-badge ${statusClass}">${icon} ${tx.status}</span></td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+        } catch (e) {
+            console.error(e);
+            if (window.location.protocol === 'file:') {
+                 showAlert("Demo Mode", "Running locally. API not reachable.", "info");
+            }
+        }
+    }
+
+    // --- Helpers ---
+
+    function maskEmail(email) {
+        if(!email) return 'User';
+        const parts = email.split("@");
+        if(parts.length < 2) return email;
+        return parts[0].substring(0, 3) + "***@" + parts[1];
+    }
+
+    function copyLink(elementId) {
+        // Fallback or specific ID
+        const  id = elementId || 'refLinkInput';
+        const input = document.getElementById(id);
+        if (!input) return;
+
+        input.select();
+        input.setSelectionRange(0, 99999); // For mobile
+        document.execCommand('copy');
+        
+        // Find the button relative to the input
+        const btn = input.parentNode.querySelector('.btn-copy-link');
+        if (btn) {
+            const oldHtml = btn.innerHTML;
+            btn.innerHTML = `<i class="ri-check-line"></i> Copied`;
+            setTimeout(() => btn.innerHTML = oldHtml, 2000);
+        }
+    }
+
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(tabId).style.display = 'block';
+        
+        // Dynamic active class
+        const tabs = ['tabProfile', 'tabSecurity', 'tabPayout'];
+        const index = tabs.indexOf(tabId);
+        if(index >= 0) {
+            document.querySelectorAll('.tab-btn')[index].classList.add('active');
+        }
+        
+        if (tabId === 'tabPayout') {
+            loadWallets();
+        }
+    }
+
+    // --- Alert/Confirm Modal ---
+    let modalResolver = null;
+
+    function showAlert(title, message, type = 'info', isConfirm = false) {
+        return new Promise((resolve) => {
+            const modal = document.getElementById('alertModal');
+            const iconEl = document.getElementById('alertIcon');
+            const btnOk = document.getElementById('modalBtnOk');
+            const btnCancel = document.getElementById('modalBtnCancel');
+            
+            document.getElementById('alertTitle').innerText = title;
+            document.getElementById('alertMessage').innerText = message;
+            
+            // Icon Logic
+            if (type === 'success') {
+                iconEl.innerHTML = '<i class="ri-checkbox-circle-fill" style="color: var(--success);"></i>';
+            } else if (type === 'error') {
+                iconEl.innerHTML = '<i class="ri-error-warning-fill" style="color: var(--primary);"></i>';
+            } else if (type === 'warning') {
+                iconEl.innerHTML = '<i class="ri-alert-fill" style="color: #FFC107;"></i>';
+            } else {
+                iconEl.innerHTML = '<i class="ri-information-fill" style="color: var(--primary);"></i>';
+            }
+
+            // Buttons Logic
+            if (isConfirm) {
+                btnCancel.style.display = 'block';
+                btnOk.innerText = 'Yes, Proceed';
+            } else {
+                btnCancel.style.display = 'none';
+                btnOk.innerText = 'Okay';
+            }
+
+            modal.style.display = 'flex';
+            modalResolver = resolve;
+        });
+    }
+
+    function closeAlertModal(confirmed = false) {
+        document.getElementById('alertModal').style.display = 'none';
+        if (modalResolver) {
+            modalResolver(confirmed);
+            modalResolver = null;
+        }
+    }
+
+    // --- Withdraw Modal ---
+    let savedPayoutAddress = null;
+
+    async function openWithdrawModal() {
+        const balanceTxt = document.getElementById('mainBalance').innerText.replace('$','').replace(',','');
+        const balance = parseFloat(balanceTxt) || 0;
+        
+        // 1. Check Payout Details FIRST (User Requirement)
+        try {
+            const res = await fetch('profile_api.php', {
+                method: 'POST',
+                headers: {'Content-Type':'application/x-www-form-urlencoded'},
+                body: 'action=get_payout'
+            });
+            const data = await res.json();
+            
+            if (!data.success || !data.address) {
+                const connect = await showAlert("No Payout Account", "You must connect your Payout Account before withdrawing.", "error", true);
+                if (connect) {
+                    openSettingsModal();
+                    switchTab('tabPayout');
+                }
+                return;
+            }
+            
+            savedPayoutAddress = data.address;
+            
+        } catch(e) {
+            console.error(e);
+            showAlert("Error", "Failed to verify account details.", "error");
+            return;
+        }
+
+        // 2. Check Balance SECOND
+        if (balance < 1) {
+            showAlert("Balance Low", "You need at least $1.00 to withdraw.", "error");
+            return;
+        }
+
+        // 3. Show Modal
+        document.getElementById('wdAmount').value = balance.toFixed(2);
+        
+        // Show Connected Account with Change Option
+        const detailsDisplay = document.getElementById('wdDetailsDisplay');
+        const masked = maskWallet(savedPayoutAddress);
+        
+        detailsDisplay.innerHTML = `
+            <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+                <span>${masked}</span>
+                <button onclick="openSettingsModal(); switchTab('tabPayout'); closeWithdrawModal();" style="background:none; border:none; color:var(--primary); font-size:12px; cursor:pointer; font-weight:600;">CHANGE</button>
+            </div>
+        `;
+        
+        document.getElementById('withdrawModal').style.display = 'flex';
+    }
+
+    function maskWallet(addr) {
+        if(!addr) return '';
+        return addr.substring(0, 6) + '...' + addr.substring(addr.length - 4);
+    }
+
+    function closeWithdrawModal() { document.getElementById('withdrawModal').style.display = 'none'; }
+    
+    async function submitWithdraw() {
+        const amount = document.getElementById('wdAmount').value;
+        
+        const confirmed = await showAlert("Confirm Withdrawal", `Request $${amount} to ${maskWallet(savedPayoutAddress)}?`, "info", true);
+        if(!confirmed) return;
+
+        try {
+            const res = await fetch('withdraw.php', {
+                method: 'POST',
+                body: JSON.stringify({ amount: amount, method: 'USDT', details: savedPayoutAddress })
+            });
+            const data = await res.json();
+            
+            if(data.success) {
+                showAlert("Submitted", data.message, "success");
+                closeWithdrawModal();
+                loadDashboardData(); // Refresh balance
+            } else {
+                showAlert("Failed", data.error, "error");
+            }
+        } catch(e) {
+             showAlert("Error", "Network error occurred.", "error");
+        }
+    }
+
+    // --- Settings Modal ---
+
+    function openSettingsModal() {
+        const name = document.getElementById('profileName').innerText;
+        const email = document.getElementById('profileEmail').innerText;
+        document.getElementById('settingsUsername').value = name;
+        document.getElementById('settingsEmail').value = email;
+        document.getElementById('settingsModal').style.display = 'flex';
+        switchTab('tabProfile');
+    }
+    function closeSettingsModal() { document.getElementById('settingsModal').style.display = 'none'; }
+
+    // Toast Notification System
+    function showToast(title, message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+
+        // Icon mapping
+        let icon = '<i class="ri-information-fill"></i>';
+        if (type === 'success') icon = '<i class="ri-checkbox-circle-fill"></i>';
+        if (type === 'error') icon = '<i class="ri-error-warning-fill"></i>';
+
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.innerHTML = `
+            <div class="toast-icon ${type}">${icon}</div>
+            <div class="toast-content">
+                <div class="toast-title">${title}</div>
+                <div class="toast-message">${message}</div>
+            </div>
+        `;
+
+        container.appendChild(toast);
+
+        // Auto dismiss
+        setTimeout(() => {
+            toast.classList.add('hiding');
+            toast.addEventListener('animationend', () => toast.remove());
+        }, 3000);
+    }
+
+    // Avatar Selection (UI only, no auto-save)
+    let selectedAvatarEmoji = null;
+    
+    function selectAvatar(emoji) {
+        // Remove previous selection
+        document.querySelectorAll('.avatar-option').forEach(opt => opt.classList.remove('selected'));
+        // Mark as selected
+        document.querySelector(`[data-avatar="${emoji}"]`).classList.add('selected');
+        
+        // Update avatar display (preview only)
+        // Ensure emoji display mode is active in settings preview
+        document.getElementById('settingsAvatar').style.backgroundImage = 'none';
+        document.getElementById('settingsAvatarInitials').style.display = 'flex';
+        document.getElementById('settingsAvatarInitials').textContent = emoji;
+        
+        // Store selected avatar
+        selectedAvatarEmoji = emoji;
+    }
+    
+    // Save Avatar Changes
+    async function saveAvatarChanges() {
+        if (!selectedAvatarEmoji) {
+            showToast('Info', 'Please select an avatar first', 'info');
+            return;
+        }
+        
+        try {
+            const formData = new FormData();
+            formData.append('action', 'update_avatar');
+            formData.append('avatar', selectedAvatarEmoji);
+            
+            const response = await fetch('profile_api.php', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                // Update sidebar avatar to show emoji
+                const sidebarAvatar = document.getElementById('sidebarAvatar');
+                const sidebarInitial = document.getElementById('sidebarAvatarInitial');
+                
+                sidebarAvatar.style.backgroundImage = 'none';
+                sidebarInitial.style.display = 'flex';
+                sidebarInitial.textContent = selectedAvatarEmoji;
+                
+                showToast('Success', 'Avatar updated successfully!', 'success');
+            } else {
+                showToast('Error', data.error || 'Failed to update avatar', 'error');
+            }
+        } catch (error) {
+            console.error('Avatar update error:', error);
+            showToast('Error', 'Failed to update avatar', 'error');
+        }
+    }
+
+    // --- Payout Helpers ---
+    async function pasteAddress() {
+        try {
+            const text = await navigator.clipboard.readText();
+            if(text) document.getElementById('payoutAddress').value = text;
+        } catch(e) {
+            showToast("Error", "Clipboard access denied", "error");
+        }
+    }
+
+    function connectWeb3Wallet() {
+        showToast("Info", "Connecting to Wallet...", "info");
+        setTimeout(() => {
+            // Simulation for now
+            if(window.ethereum) {
+                 showToast("MetaMask", "Wallet found! (Integration Pending)", "success");
+            } else {
+                 showToast("Wallet", "No Web3 wallet detected. Please enter manually.", "warning");
+            }
+        }, 1000);
+    }
+
+    // --- Wallet Management ---
+    
+    function toggleAddWalletForm() {
+        const form = document.getElementById('addWalletForm');
+        const icon = document.getElementById('addWalletIcon');
+        if (form.style.display === 'none') {
+            form.style.display = 'block';
+            icon.className = 'ri-indeterminate-circle-line';
+        } else {
+            form.style.display = 'none';
+            icon.className = 'ri-add-circle-line';
+        }
+    }
+
+    async function loadWallets() {
+        const list = document.getElementById('walletsList');
+        try {
+            const res = await fetch('profile_api.php?action=get_wallets');
+            const data = await res.json();
+            
+            if (!data.success) throw new Error("Failed to load");
+            
+            if (data.wallets.length === 0) {
+                list.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-sec); font-size:13px;">No wallets added yet.</div>`;
+                toggleAddWalletForm(); // Open form automatically if empty
+                return;
+            }
+
+            let html = '';
+            data.wallets.forEach(w => {
+                 const isActive = w.address === data.active_address;
+                 const activeStyle = isActive 
+                    ? 'border: 1px solid var(--primary); background: rgba(37, 244, 238, 0.05); box-shadow: 0 4px 12px rgba(37, 244, 238, 0.05);' 
+                    : 'border: 1px solid var(--border); background: var(--bg-card); opacity: 0.8;';
+                 
+                 const checkIcon = isActive 
+                    ? '<i class="ri-checkbox-circle-fill" style="color:var(--primary); font-size:20px;"></i>' 
+                    : '<i class="ri-checkbox-blank-circle-line" style="color:var(--text-sec); font-size:20px;"></i>';
+                 
+                 const statusBadge = isActive
+                    ? `<div style="font-size:10px; background:rgba(37, 244, 238, 0.15); color:var(--primary); padding:2px 6px; border-radius:4px; font-weight:700; margin-left:8px; display:inline-block;">CONNECTED</div>`
+                    : '';
+
+                 html += `
+                    <div style="display:flex; align-items:center; gap:12px; padding:16px; border-radius:12px; margin-bottom:12px; transition:all 0.2s ease; ${activeStyle}">
+                        <div onclick="setWalletActive('${w.address}')" style="cursor:pointer; display:flex;">${checkIcon}</div>
+                        <div style="flex:1;">
+                            <div style="display:flex; align-items:center;">
+                                <div style="font-weight:600; font-size:14px; color:var(--text-main);">${w.label || 'My Wallet'}</div>
+                                ${statusBadge}
+                            </div>
+                            <div style="font-size:11px; color:var(--text-sec); font-family:monospace; margin-top:2px; letter-spacing:0.5px;">${maskWallet(w.address)}</div>
+                        </div>
+                        <button onclick="deleteWallet(${w.id})" style="background:none; border:none; color:var(--text-sec); cursor:pointer; padding:8px; border-radius:6px; transition:background 0.2s;" onmouseover="this.style.background='rgba(255,50,50,0.1)';this.style.color='var(--danger)'" onmouseout="this.style.background='transparent';this.style.color='var(--text-sec)'">
+                            <i class="ri-delete-bin-line"></i>
+                        </button>
+                    </div>
+                 `;
+            });
+            list.innerHTML = html;
+            
+        } catch(e) {
+            console.error(e);
+            list.innerHTML = `<div style="color:var(--danger); text-align:center;">Error loading wallets</div>`;
+        }
+    }
+
+    async function addNewWallet() {
+        const address = document.getElementById('payoutAddress').value;
+        const label = document.getElementById('newWalletLabel').value;
+        
+        if (address.length < 20) {
+            showToast("Invalid", "Enter valid TRC20 address", "error");
+            return;
+        }
+
+        try {
+            const formData = new FormData();
+            formData.append('action', 'add_wallet');
+            formData.append('address', address);
+            formData.append('label', label);
+
+            const res = await fetch('profile_api.php', { method: 'POST', body: formData });
+            const data = await res.json();
+            
+            if(data.success) {
+                showToast("Success", "Wallet added!", "success");
+                document.getElementById('payoutAddress').value = '';
+                document.getElementById('newWalletLabel').value = '';
+                toggleAddWalletForm();
+                loadWallets();
+            } else {
+                showToast("Error", data.error || "Failed to add", "error");
+            }
+        } catch(e) {
+            showToast("Error", "Connection failed", "error");
+        }
+    }
+
+    async function setWalletActive(address) {
+        try {
+            const formData = new FormData();
+            formData.append('action', 'set_active_wallet');
+            formData.append('address', address);
+
+            const res = await fetch('profile_api.php', { method: 'POST', body: formData });
+            const data = await res.json();
+            
+            if(data.success) {
+                loadWallets(); // Refresh list to update selection
+                showToast("Updated", "Primary wallet updated", "success");
+            }
+        } catch(e) { console.error(e); }
+    }
+
+    async function deleteWallet(id) {
+        if(!confirm("Delete this wallet?")) return;
+        try {
+            const formData = new FormData();
+            formData.append('action', 'delete_wallet');
+            formData.append('wallet_id', id);
+
+            const res = await fetch('profile_api.php', { method: 'POST', body: formData });
+            const data = await res.json();
+            
+            if(data.success) {
+                loadWallets();
+                showToast("Deleted", "Wallet removed", "info");
+            }
+        } catch(e) { console.error(e); }
+    }
+
+    // Deprecated but kept for compatibility fallback
+    async function savePayoutDetails() {
+         addNewWallet();
+    }
+
+    async function savePassword() {
+        const oldPass = document.getElementById('secOldPass').value;
+        const newPass = document.getElementById('secNewPass').value;
+        if(!oldPass || !newPass) {
+            showToast("Missing", "Enter all fields.", "error");
+            return;
+        }
+        
+        try {
+            const res = await fetch('security_api.php', { 
+                method: 'POST', 
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ action: 'change_password', old_password: oldPass, new_password: newPass })
+            });
+            const data = await res.json();
+            if(data.success) {
+                showToast("Success", "Password changed.", "success");
+                document.getElementById('secOldPass').value = '';
+                document.getElementById('secNewPass').value = '';
+            } else {
+                showToast("Error", data.error, "error");
+            }
+        } catch(e) { showToast("Error", "Connection failed.", "error"); }
+    }
+
+    async function toggle2FA() {
+        const checkbox = document.getElementById('toggle2FA');
+        const setupBox = document.getElementById('setup2FA');
+        
+        if (checkbox.checked) {
+            setupBox.style.display = 'block';
+            try {
+                const res = await fetch('security_api.php', { method: 'POST', body: JSON.stringify({ action: 'generate_2fa' }) });
+                const data = await res.json();
+                if(data.success) {
+                    currentSecret = data.secret;
+                    document.getElementById('manualSecret').innerText = data.secret;
+                    const email = document.getElementById('settingsEmail').value;
+                    const uri = `otpauth://totp/Cheaper360:${email}?secret=${data.secret}&issuer=Cheaper360`;
+                    document.getElementById('qrImage').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(uri)}`;
+                }
+            } catch(e) { checkbox.checked = false; }
+        } else {
+            setupBox.style.display = 'none';
+            // KEEP showAlert here for Confirmation Modal
+            const confirmed = await showAlert("Security Check", "Are you sure you want to disable Two-Factor Authentication? This will make your account less secure.", "warning", true);
+            
+            if(confirmed) {
+                await fetch('security_api.php', { method: 'POST', body: JSON.stringify({ action: 'disable_2fa' }) });
+                showToast("Disabled", "Two-Factor Authentication has been disabled.", "info");
+                document.getElementById('setup2FA').innerHTML = `<p style="color:var(--text-sec); text-align:center; padding:10px;">2FA Disabled</p>`;
+            } else {
+                checkbox.checked = true;
+                setupBox.style.display = 'block';
+                // If it was already active (not just in setup), we should keep it active
+                loadDashboardData(); 
+            }
+        }
+    }
+
+    async function verifyAndEnable2FA() {
+        const code = document.getElementById('otpInput').value;
+        if(!code) return;
+        
+        const res = await fetch('security_api.php', { method: 'POST', body: JSON.stringify({ action: 'enable_2fa', secret: currentSecret, code: code }) });
+        const data = await res.json();
+        if(data.success) {
+             showToast("Secured", "2FA Enabled!", "success");
+             document.getElementById('setup2FA').innerHTML = `<p style="color:var(--success); font-weight:700; text-align:center; padding:10px;"><i class="ri-shield-check-fill"></i> 2FA is Active</p>`;
+        } else {
+             showToast("Error", "Invalid Code", "error");
+        }
+    }
+
+</script>
+<!-- Toast Notification Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+</body>
+</html>

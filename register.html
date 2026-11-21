@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Become an Affiliate | Cheaper360</title>
+    <link rel="icon" href="img/icone.ico"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script>
+        fetch('dashboard_api.php')
+            .then(res => {
+                if (res.ok) window.location.href = 'dashboard.html';
+            })
+            .catch(e => console.log(e));
+    </script>
+    <style>
+        body {
+            font-family: "Proxima Nova", sans-serif;
+            background: #F8F9FA;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            color: #161823;
+        }
+        
+        .auth-card {
+            background: white;
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            text-align: center;
+        }
+        
+        .logo { margin-bottom: 24px; height: 48px; }
+        
+        h1 { font-size: 24px; margin-bottom: 8px; font-weight: 700; }
+        p { color: #8A8B91; margin-bottom: 32px; font-size: 14px; }
+        
+        .form-group { text-align: left; margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
+        input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #E8E8E8;
+            background: #F8F9FA;
+            border-radius: 8px;
+            font-family: inherit;
+            box-sizing: border-box;
+            transition: all 0.2s;
+        }
+        input:focus { border-color: #FE2C55; background: white; outline: none; }
+        
+        .btn-submit {
+            background: #FE2C55;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+        .btn-submit:hover { background: #E6284C; }
+        
+        .footer-link {
+            margin-top: 24px;
+            font-size: 14px;
+            color: #8A8B91;
+        }
+        .footer-link a { color: #FE2C55; text-decoration: none; font-weight: 600; }
+        
+        /* Error Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-overlay.show {
+            display: flex;
+        }
+        
+        .modal-card {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            animation: slideUp 0.3s ease;
+        }
+        
+        .error-icon {
+            width: 64px;
+            height: 64px;
+            background: #FEE2E2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+            color: #DC2626;
+            font-weight: 700;
+        }
+        
+        .modal-card h2 {
+            font-size: 22px;
+            margin: 0 0 12px 0;
+            color: #161823;
+        }
+        
+        .modal-card p {
+            color: #666;
+            margin: 0 0 24px 0;
+            font-size: 15px;
+        }
+        
+        .btn-close {
+            background: #FE2C55;
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .btn-close:hover {
+            background: #E6284C;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="auth-card">
+    <a href="index.html">
+        <img src="img/tiktok.png" alt="Logo" class="logo">
+    </a>
+    <h1>Join Program</h1>
+    <p>Earn 25% commission on every sale you refer.</p>
+    
+    <form action="auth.php" method="POST">
+        <input type="hidden" name="action" value="register">
+        
+        <div class="form-group">
+            <label><i class="ri-user-line"></i> Full Name</label>
+            <input type="text" name="name" required placeholder="John Doe">
+        </div>
+
+        <div class="form-group">
+            <label><i class="ri-mail-line"></i> Email Address</label>
+            <input type="email" name="email" required placeholder="you@example.com" oninput="validateEmailRegister(this)">
+        </div>
+
+        <div class="form-group" style="position: relative;">
+            <label><i class="ri-shield-user-line"></i> Referral Code (Optional)</label>
+            <input type="text" name="referral_code" id="refCodeInput" placeholder="Code" 
+                   style="text-transform: uppercase; letter-spacing: 1px; font-weight: 700; color: #000000; padding-right: 40px;"
+                   oninput="validateReferralCode(this.value)">
+            <i id="refCodeStatus" class="ri-checkbox-circle-fill" 
+               style="position: absolute; right: 12px; top: 35px; font-size: 20px; color: #25C953; display: none;"></i>
+        </div>
+        
+        <div class="form-group" style="position: relative;">
+            <label><i class="ri-lock-line"></i> Password</label>
+            <input type="password" name="password" id="passwordInputRegister" required placeholder="Create a strong password" style="padding-right: 40px;" oninput="checkStrength(this)">
+            <i class="ri-eye-off-line" id="toggleIconRegister" onclick="togglePassword('passwordInputRegister', 'toggleIconRegister')" 
+               style="position: absolute; right: 12px; top: 38px; cursor: pointer; color: #8A8B91; font-size: 18px;"></i>
+            <div style="background: #eee; height: 4px; margin-top: 8px; border-radius: 2px; overflow: hidden;">
+                <div id="strengthBar" style="height: 100%; width: 0%; background: #eee; transition: all 0.3s;"></div>
+            </div>
+            <div id="strengthText" style="font-size: 11px; margin-top: 4px; color: #8A8B91;"></div>
+        </div>
+        
+        <button type="submit" class="btn-submit">Create Account</button>
+    </form>
+    
+    <div class="footer-link">
+        Already an affiliate? <a href="login.html">Login</a>
+    </div>
+</div>
+
+<!-- Error Modal -->
+<div class="modal-overlay" id="errorModal">
+    <div class="modal-card">
+        <div class="error-icon">✕</div>
+        <h2>Registration Error</h2>
+        <p id="errorMessage"></p>
+        <button class="btn-close" onclick="closeModal()">Try Again</button>
+    </div>
+</div>
+
+<script>
+    // Check for error in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    
+    if (error) {
+        // Show modal with error message
+        document.getElementById('errorMessage').textContent = error;
+        document.getElementById('errorModal').classList.add('show');
+        
+        // Clear URL parameter
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    
+    function closeModal() {
+        document.getElementById('errorModal').classList.remove('show');
+    }
+    
+    // Close modal on overlay click
+    document.getElementById('errorModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+
+    // Auto-fill Referral Code
+    document.addEventListener('DOMContentLoaded', () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        let ref = urlParams.get('ref');
+        
+        // If not in URL, check cookie
+        if (!ref) {
+            const match = document.cookie.match(new RegExp('(^| )ref_code=([^;]+)'));
+            if (match) ref = match[2];
+        }
+
+        if (ref) {
+            const input = document.getElementById('refCodeInput');
+            if (input) {
+                input.value = ref;
+                // input.readOnly = true; // Removed per user request
+                // input.style.background = '#f0f0f0'; // Removed per user request
+                input.style.background = '#ffffff'; // Ensure white background
+                
+                // Trigger validation immediately
+                if (typeof validateReferralCode === 'function') {
+                    validateReferralCode(ref);
+                }
+            }
+        }
+    });
+
+    // Form Improvements
+    function togglePassword(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.remove('ri-eye-off-line');
+            icon.classList.add('ri-eye-line');
+        } else {
+            input.type = 'password';
+            icon.classList.remove('ri-eye-line');
+            icon.classList.add('ri-eye-off-line');
+        }
+    }
+
+    function validateEmailRegister(input) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (emailRegex.test(input.value)) {
+            input.style.borderColor = '#25C953';
+        } else {
+            input.style.borderColor = input.value ? '#FE2C55' : '#E8E8E8';
+        }
+    }
+
+    function checkStrength(input) {
+        const password = input.value;
+        const bar = document.getElementById('strengthBar');
+        const text = document.getElementById('strengthText');
+
+        // Reset
+        if (!password) {
+            bar.style.width = '0%';
+            bar.style.background = '#eee';
+            text.textContent = '';
+            return;
+        }
+        // ... (rest of strength logic existing)
+    }
+
+    // New: Referral Validation Logic
+    let refDebounceTimer;
+    function validateReferralCode(code) {
+        code = code.trim();
+        const icon = document.getElementById('refCodeStatus');
+        const input = document.getElementById('refCodeInput');
+        
+        // Reset
+        icon.style.display = 'none';
+        input.style.borderColor = 'rgba(22, 24, 35, 0.12)'; 
+        
+        if (code.length === 0) return;
+
+        clearTimeout(refDebounceTimer);
+        refDebounceTimer = setTimeout(async () => {
+            try {
+                const res = await fetch(`check_referral.php?code=${code}`);
+                const data = await res.json();
+
+                if (data.valid) {
+                    input.style.borderColor = '#25C953';
+                    icon.className = 'ri-checkbox-circle-fill';
+                    icon.style.color = '#25C953';
+                    icon.style.display = 'block';
+                } else {
+                    input.style.borderColor = '#FE2C55';
+                    icon.className = 'ri-close-circle-fill'; 
+                    icon.style.color = '#FE2C55';
+                    icon.style.display = 'block';
+                }
+            } catch (err) {
+                console.error('Validation error', err);
+            }
+        }, 500);
+    }
+        
+
+</script>
+
+</body>
+</html>

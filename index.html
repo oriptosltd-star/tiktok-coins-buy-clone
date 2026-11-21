@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Buy TikTok Coins | Cheaper360</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Cheaper360">
+    <link rel="apple-touch-icon" href="img/logo.png">
+    <link rel="icon" href="img/icone.ico"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Referral Access Control -->
+    <script>
+        (async function() {
+            // Don't run on app.html (publicly accessible)
+            if (window.location.pathname.includes('app.html')) return;
+            
+            async function validateReferralCode(code) {
+                // Hardcoded test codes (temporary bypass)
+                const testCodes = ['ADMIN2024', 'TEST2024', 'DEMO2024'];
+                if (testCodes.includes(code.toUpperCase())) {
+                    console.log('✅ Using hardcoded test code:', code);
+                    return true;
+                }
+                
+                // Otherwise validate with database
+                try {
+                    const response = await fetch(`check_referral.php?code=${encodeURIComponent(code)}`);
+                    const data = await response.json();
+                    return data.valid === true;
+                } catch (err) {
+                    console.error('❌ API validation failed:', err);
+                    return false;
+                }
+            }
+            
+            async function checkReferralAccess() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const refCode = urlParams.get('ref');
+                
+                if (refCode) {
+                    const isValid = await validateReferralCode(refCode);
+                    if (isValid) {
+                        localStorage.setItem('referralCode', refCode);
+                        localStorage.setItem('hasReferralAccess', 'true');
+                        const d = new Date();
+                        d.setTime(d.getTime() + (30*24*60*60*1000));
+                        document.cookie = `ref_code=${refCode};expires=${d.toUTCString()};path=/`;
+                        return true;
+                    } else {
+                        localStorage.removeItem('referralCode');
+                        localStorage.removeItem('hasReferralAccess');
+                        return false;
+                    }
+                }
+                
+                const savedCode = localStorage.getItem('referralCode');
+                if (savedCode && localStorage.getItem('hasReferralAccess') === 'true') {
+                    const isValid = await validateReferralCode(savedCode);
+                    if (isValid) return true;
+                    localStorage.removeItem('referralCode');
+                    localStorage.removeItem('hasReferralAccess');
+                }
+                
+                return false;
+            }
+            
+            const hasAccess = await checkReferralAccess();
+            if (!hasAccess) {
+                window.location.href = '/app.html';
+            }
+        })();
+    </script>
+    <script>
+        // Check if user is already logged in
+        fetch('dashboard_api.php')
+            .then(res => {
+                if (res.ok) window.location.href = 'dashboard.html';
+            })
+            .catch(e => console.log(e));
+    </script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FE2C55;
+            --primary-hover: #E0274A;
+            --secondary: #25F4EE;
+            --dark-bg: #121212;
+            --card-bg: #1E1E1E;
+            --text-main: #FFFFFF;
+            --text-sec: #A1A1A1;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--dark-bg);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        a { text-decoration: none; color: inherit; transition: color 0.2s; }
+        a:hover { color: var(--primary); }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 8%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            background: rgba(18, 18, 18, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            box-sizing: border-box;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .logo span { color: var(--primary); }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .auth-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-login {
+            color: #fff;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .btn-login:hover { color: var(--primary); }
+
+        .btn-nav {
+            background: #fff;
+            color: #000;
+            padding: 10px 24px;
+            border-radius: 99px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .btn-nav:hover { background: #f0f0f0; color: #000; }
+
+        .hamburger { display: none; cursor: pointer; font-size: 24px; }
+
+        /* Hero Section */
+        .hero {
+            padding: 160px 8% 100px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 80vh;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: -10%;
+            width: 50%;
+            height: 50%;
+            background: var(--primary);
+            filter: blur(200px);
+            opacity: 0.15;
+            z-index: -1;
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -10%;
+            right: -10%;
+            width: 40%;
+            height: 40%;
+            background: var(--secondary);
+            filter: blur(200px);
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        .hero-content {
+            max-width: 600px;
+        }
+
+        h1 {
+            font-size: 56px;
+            line-height: 1.1;
+            font-weight: 800;
+            margin-bottom: 24px;
+            background: linear-gradient(to right, #fff, #b3b3b3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-sub {
+            font-size: 20px;
+            color: var(--text-sec);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+
+        .btn-cta {
+            background: var(--primary);
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+            padding: 16px 48px;
+            border-radius: 99px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(254, 44, 85, 0.4);
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .btn-cta:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(254, 44, 85, 0.5);
+            color: #fff;
+        }
+
+        /* 3D Visual Mockup (CSS Only) */
+        .hero-visual {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .coin-3d {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 250px;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5));
+        }
+
+        .coin-sm {
+            position: absolute;
+            width: 80px;
+            z-index: 1;
+        }
+        .c1 { top: 10%; right: 10%; animation: float 5s ease-in-out infinite 0.5s; }
+        .c2 { bottom: 20%; left: 0%; animation: float 7s ease-in-out infinite 1s; }
+
+
+        /* Stats/Trust Strip */
+        .trust-strip {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            padding: 40px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 80px;
+            flex-wrap: wrap;
+        }
+        .trust-item { text-align: center; }
+        .trust-num { font-size: 32px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+        .trust-label { color: var(--text-sec); font-size: 14px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Features */
+        .features {
+            padding: 0 8% 100px;
+            text-align: center;
+        }
+        
+        .section-tag {
+            color: var(--primary);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 14px;
+            margin-bottom: 16px;
+            display: block;
+        }
+        
+        h2 { font-size: 36px; margin-bottom: 60px; font-weight: 700; }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 20px;
+            transition: transform 0.3s;
+            border: 1px solid rgba(255,255,255,0.05);
+            text-align: left;
+        }
+        .feature-card:hover { transform: translateY(-10px); background: #252525; }
+
+        .f-icon {
+            width: 48px; height: 48px;
+            background: rgba(254, 44, 85, 0.1);
+            color: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 24px;
+        }
+
+        .f-title { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+        .f-desc { color: var(--text-sec); line-height: 1.6; }
+
+        /* Footer */
+        footer {
+            background: #000;
+            padding: 80px 8% 40px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        .footer-logo { font-size: 20px; font-weight: 700; margin-bottom: 20px; display: block; }
+        .footer-desc { color: var(--text-sec); line-height: 1.6; max-width: 300px; }
+
+        .footer-col h4 { font-size: 16px; margin-bottom: 24px; color: #fff; }
+        .footer-col a { display: block; color: var(--text-sec); margin-bottom: 12px; font-size: 14px; }
+        .footer-col a:hover { color: #fff; }
+
+        .copyright {
+            text-align: center;
+            color: rgba(255,255,255,0.6);
+            font-size: 13px;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .hero { flex-direction: column-reverse; padding-top: 120px; text-align: center; min-height: auto; }
+            h1 { font-size: 40px; }
+            .hero-visual { width: 300px; height: 300px; margin-bottom: 40px; }
+            .nav-links, .auth-actions { display: none; }
+            .hamburger { display: block; }
+            .footer-grid { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+            .footer-desc { margin: 0 auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="logo" style="text-decoration: none; color: inherit;">
+            <span>Cheaper</span>360
+        </a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="pricing.html">Pricing</a>
+            <a href="terms.html">Terms</a>
+            <a href="privacy.html">Privacy</a>
+        </div>
+        <div class="auth-actions">
+            <a href="login.html" class="btn-login">Login</a>
+            <a href="register.html" class="btn-login">Register</a>
+            <a href="app.html" class="btn-nav">Buy Coins</a>
+        </div>
+        <div class="hamburger"><i class="ri-menu-line"></i></div>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-content">
+            <h1>The #1 Source for<br>Cheap TikTok Coins.</h1>
+            <p class="hero-sub">Join over 500,000 creators saving big on TikTok Coins. Fast delivery, 100% secure payments, and 24/7 support. The smart way to recharge.</p>
+            <a href="app.html" class="btn-cta"><i class="ri-flashlight-fill"></i> Get Coins Now</a>
+        </div>
+        <div class="hero-visual">
+            <img src="img/cointiktok.png" class="coin-3d">
+            <img src="img/cointiktok.png" class="coin-sm c1" style="opacity:0.6; width:60px;">
+            <img src="img/cointiktok.png" class="coin-sm c2" style="opacity:0.4; width:50px;">
+        </div>
+    </div>
+
+    <div class="trust-strip">
+        <div class="trust-item">
+            <div class="trust-num">500K+</div>
+            <div class="trust-label">Coins Sold</div>
+        </div>
+        <div class="trust-item">
+            <div class="trust-num">0%</div>
+            <div class="trust-label">Risk</div>
+        </div>
+        <div class="trust-item">
+            <div class="trust-num">Instant</div>
+            <div class="trust-label">Delivery</div>
+        </div>
+    </div>
+
+    <!-- Trust Badges Section -->
+    <style>
+        .trust-badges {
+            padding: 60px 8%;
+            background: #181818;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .trust-badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            align-items: center;
+            justify-items: center;
+        }
+        
+        .trust-badge-item {
+            text-align: center;
+        }
+        
+        .trust-badge-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+            background: rgba(254, 44, 85, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+        
+        .trust-badge-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        
+        .trust-badge-desc {
+            font-size: 14px;
+            color: var(--text-sec);
+        }
+        
+        .payment-logos {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        
+        .payment-logo {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #A1A1A1;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .trusted-counter {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #FE2C55 0%, #25F4EE 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4px;
+        }
+        
+        @media (max-width: 768px) {
+            .trust-badges {
+                padding: 40px 8%;
+            }
+            .trust-badges-grid {
+                gap: 32px;
+            }
+        }
+    </style>
+    
+    <div class="trust-badges">
+        <div class="trust-badges-grid">
+            <div class="trust-badge-item">
+                <div class="trust-badge-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2L3 7V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V7L12 2Z" stroke="#FE2C55" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M9 12L11 14L15 10" stroke="#FE2C55" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="trust-badge-title">SSL Secured</div>
+                <div class="trust-badge-desc">256-bit encryption</div>
+            </div>
+            
+            <div class="trust-badge-item">
+                <div class="trust-badge-icon"><i class="ri-bank-card-fill"></i></div>
+                <div class="trust-badge-title">Secure Payments</div>
+                <div class="trust-badge-desc">Trusted payment processors</div>
+                <div class="payment-logos">
+                    <span class="payment-logo">Stripe</span>
+                    <span class="payment-logo">PayPal</span>
+                    <span class="payment-logo">Crypto</span>
+                </div>
+            </div>
+            
+            <div class="trust-badge-item">
+                <div class="trust-badge-icon"><i class="ri-team-fill"></i></div>
+                <div class="trusted-counter">500K+</div>
+                <div class="trust-badge-title">Trusted Users</div>
+                <div class="trust-badge-desc">Join thousands of satisfied customers</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="features">
+        <span class="section-tag">Why Choose Us</span>
+        <h2>Premium Service, Unbeatable Price</h2>
+        
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="f-icon"><i class="ri-flashlight-fill"></i></div>
+                <div class="f-title">Instant Top-up</div>
+                <div class="f-desc">Your coins are added to your account immediately after payment verification. No waiting around.</div>
+            </div>
+            <div class="feature-card">
+                <div class="f-icon"><i class="ri-shield-check-fill"></i></div>
+                <div class="f-title">100% Secure</div>
+                <div class="f-desc">Payments are processed securely via Paddle. We never store your payment details.</div>
+            </div>
+            <div class="feature-card">
+                <div class="f-icon"><i class="ri-price-tag-3-fill"></i></div>
+                <div class="f-title">Unbeatable Rates</div>
+                <div class="f-desc">Stop overpaying in the app. We offer the most competitive rates in the market, allowing you to gift more for less.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <style>
+        .reviews-section {
+            padding: 80px 0;
+            background: #181818;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .marquee-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            margin-top: 50px;
+            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        }
+        
+        .marquee-content {
+            display: flex;
+            gap: 30px;
+            width: max-content;
+            animation: scroll 40s linear infinite;
+        }
+        
+        .marquee-content:hover {
+            animation-play-state: paused;
+        }
+        
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-50% - 15px)); }
+        }
+
+        .review-card {
+            background: #1E1E1E;
+            padding: 30px;
+            border-radius: 16px;
+            text-align: left;
+            border: 1px solid rgba(255,255,255,0.05);
+            width: 350px;
+            flex-shrink: 0;
+            transition: transform 0.2s;
+        }
+        .review-card:hover { transform: translateY(-5px); background: #252525; }
+
+        .stars { color: #FFD700; margin-bottom: 15px; font-size: 18px; }
+        .r-text { color: #e0e0e0; line-height: 1.6; font-style: italic; margin-bottom: 20px; font-size: 14px; min-height: 70px; }
+        .r-author { display: flex; align-items: center; gap: 12px; }
+        .r-avatar { width: 40px; height: 40px; background: #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; }
+        .r-name { font-weight: 600; color: #fff; font-size: 15px; }
+        .r-verified { color: #25F4EE; font-size: 12px; }
+    </style>
+    
+    <div class="reviews-section">
+        <span class="section-tag">Testimonials</span>
+        <h2>What Our Customers Say</h2>
+        
+        <div class="marquee-container">
+            <!-- Doubled content for seamless loop -->
+            <div class="marquee-content">
+                <!-- Set 1 -->
+                <div class="review-card"><div class="stars">★★★★★</div><p class="r-text">"I was skeptical at first, but the coins arrived instantly. Saved me about $50 on my last recharge. Definitely using this from now on!"</p><div class="r-author"><div class="r-avatar">JD</div><div><div class="r-name">John D.</div><div class="r-verified">Verified Buyer</div></div></div></div>
+                <div class="review-card"><div class="stars">★★★★★</div><p class="r-text">"Super fast and easy. The Paddle checkout makes me feel safe using my card. Highly recommended for any heavy gifter."</p><div class="r-author"><div class="r-avatar">AS</div><div><div class="r-name">Sarah A.</div><div class="r-verified">Verified Buyer</div></div></div></div>
+                <div class="review-card"><div class="stars">★★★★★</div><p class="r-text">"Best rates I've found online. The support team was also very helpful when I had a question about bulk buying. 10/10 service."</p><div class="r-author"><div class="r-avatar">MK</div><div><div class="r-name">Mike K.</div><div class="r-verified">Verified Buyer</div></div></div></div>
+                <div class="review-card"><div class="stars">★★★★★</div><p class="r-text">"Much cheaper than buying directly from the app. I gift a lot in streams and this saves me hundreds every month."</p><div class="r-author"><div class="r-avatar">PL</div><div><div class="r-name">Paul L.</div><div class="r-verified">Verified Buyer</div></div></div></div>
+                <div class="review-card"><div class="stars">★★★★★</div><p class="r-text">"Instant delivery confirmed. I was worried it might take time but it was literally seconds. Great site."</p><div class="r-author"><div class="r-avatar">ER</div><div><div class="r-name">Emily R.</div><div class="r-verified">Verified Buyer</div></div></div></div>
+                <div class="review-card"><div class="stars">★★★★★</div><p class="r-text">"The custom coin option is a lifesaver. I can buy exactly what I need without wasting money on fixed bundles."</p><div class="r-author"><div class="r-avatar">TW</div><div><div class="r-name">Tom W.</div><div class="r-verified">Verified Buyer</div></div></div></div>
+                <div class="review-card"><div class="stars">★★★★★</div><p class="r-text">"Support responded within 5 minutes when I had a typo in my username. They fixed it and coins sent immediately. Amazing."</p><div class="r-author"><div class="r-avatar">SJ</div><div><div class="r-name">Sarah J.</div><div class="r-verified">Verified Buyer</div></div></div></div>
+                <div class="review-card"><div class="stars">★★★★★</div><p class="r-text">"Smooth transaction. No hidden fees. What you see is what you pay. Very transparent."</p><div class="r-author"><div class="r-avatar">RB</div><div><div class="r-name">Ryan B.</div><div class="r-verified">Verified Buyer</div></div></div></div>
+                <div class="review-card"><div class="stars">★★★★★</div><p class="r-text">"Finally a legit site for cheap coins. I've tried others that were scams but Cheaper360 is the real deal."</p><div class="r-author"><div class="r-avatar">KC</div><div><div class="r-name">Kevin C.</div><div class="r-verified">Verified Buyer</div></div></div></div>
+                <div class="review-card"><div class="stars">★★★★★</div><p class="r-text">"Love the dark mode design and how simple the process is. 3 clicks and I'm done. Keeps me supporting my fav creators."</p><div class="r-author"><div class="r-avatar">LM</div><div><div class="r-name">Lisa M.</div><div class="r-verified">Verified Buyer</div></div></div></div>
+
+                <!-- Set 2 (Duplicate for Loop) -->
+                <div class="review-card"><div class="stars">★★★★★</div><p class="r-text">"I was skeptical at first, but the coins arrived instantly. Saved me about $50 on my last recharge. Definitely using this from now on!"</p><div class="r-author"><div class="r-avatar">JD</div><div><div class="r-name">John D.</div><div class="r-verified">Verified Buyer</div></div></div></div>
+                <div class="review-card"><div class="stars">★★★★★</div><p class="r-text">"Super fast and easy. The Paddle checkout makes me feel safe using my card. Highly recommended for any heavy gifter."</p><div class="r-author"><div class="r-avatar">AS</div><div><div class="r-name">Sarah A.</div><div class="r-verified">Verified Buyer</div></div></div></div>
+                <div class="review-card"><div class="stars">★★★★★</div><p class="r-text">"Best rates I've found online. The support team was also very helpful when I had a question about bulk buying. 10/10 service."</p><div class="r-author"><div class="r-avatar">MK</div><div><div class="r-name">Mike K.</div><div class="r-verified">Verified Buyer</div></div></div></div>
+                <div class="review-card"><div class="stars">★★★★★</div><p class="r-text">"Much cheaper than buying directly from the app. I gift a lot in streams and this saves me hundreds every month."</p><div class="r-author"><div class="r-avatar">PL</div><div><div class="r-name">Paul L.</div><div class="r-verified">Verified Buyer</div></div></div></div>
+                <div class="review-card"><div class="stars">★★★★★</div><p class="r-text">"Instant delivery confirmed. I was worried it might take time but it was literally seconds. Great site."</p><div class="r-author"><div class="r-avatar">ER</div><div><div class="r-name">Emily R.</div><div class="r-verified">Verified Buyer</div></div></div></div>
+                <div class="review-card"><div class="stars">★★★★★</div><p class="r-text">"The custom coin option is a lifesaver. I can buy exactly what I need without wasting money on fixed bundles."</p><div class="r-author"><div class="r-avatar">TW</div><div><div class="r-name">Tom W.</div><div class="r-verified">Verified Buyer</div></div></div></div>
+                <div class="review-card"><div class="stars">★★★★★</div><p class="r-text">"Support responded within 5 minutes when I had a typo in my username. They fixed it and coins sent immediately. Amazing."</p><div class="r-author"><div class="r-avatar">SJ</div><div><div class="r-name">Sarah J.</div><div class="r-verified">Verified Buyer</div></div></div></div>
+                <div class="review-card"><div class="stars">★★★★★</div><p class="r-text">"Smooth transaction. No hidden fees. What you see is what you pay. Very transparent."</p><div class="r-author"><div class="r-avatar">RB</div><div><div class="r-name">Ryan B.</div><div class="r-verified">Verified Buyer</div></div></div></div>
+                <div class="review-card"><div class="stars">★★★★★</div><p class="r-text">"Finally a legit site for cheap coins. I've tried others that were scams but Cheaper360 is the real deal."</p><div class="r-author"><div class="r-avatar">KC</div><div><div class="r-name">Kevin C.</div><div class="r-verified">Verified Buyer</div></div></div></div>
+                <div class="review-card"><div class="stars">★★★★★</div><p class="r-text">"Love the dark mode design and how simple the process is. 3 clicks and I'm done. Keeps me supporting my fav creators."</p><div class="r-author"><div class="r-avatar">LM</div><div><div class="r-name">Lisa M.</div><div class="r-verified">Verified Buyer</div></div></div></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-col">
+                <span class="footer-logo">Cheaper360</span>
+                <p class="footer-desc">The #1 reliable source for discounted TikTok coins. Safe, fast, and affordable.</p>
+                <p class="footer-desc" style="font-size: 12px; margin-top: 20px; opacity: 0.7;">Disclaimer: This website is an independent digital goods service. We are not affiliated with, endorsed by, or sponsored by TikTok Inc. All trademarks remain property of their respective owners.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Menu</h4>
+                <a href="index.html">Home</a>
+                <a href="app.html">Buy Coins</a>
+                <a href="contact.html">Contact Support</a>
+            </div>
+            <div class="footer-col">
+                <h4>Legal</h4>
+                <a href="terms.html">Terms of Service</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="refund.html">Refund Policy</a>
+            </div>
+        </div>
+        <div class="copyright">
+            © 2026 Cheaper360. All rights reserved. Not affiliated with TikTok Inc.
+        </div>
+    </footer>
+
+    <!-- Register PWA Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('PWA ServiceWorker registered successfully', registration.scope);
+                    })
+                    .catch(err => {
+                        console.error('PWA ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

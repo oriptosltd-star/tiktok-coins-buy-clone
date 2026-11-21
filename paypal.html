@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Paypal - Payment Validated</title>
+    <link rel="icon" href="img/iconepp.ico"/>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #F5F7FA;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .confirmation-box {
+            background-color: #ffffff;
+            width: 100%;
+            max-width: 420px;
+            border-radius: 8px; /* Softer radius */
+            padding: 40px 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Smoother shadow */
+            text-align: center;
+            box-sizing: border-box;
+            border: 1px solid #e6e6e6; /* Subtle border */
+        }
+
+        .paypal-logo {
+            width: 140px;
+            margin-bottom: 24px;
+        }
+
+        .success-icon {
+            width: 60px;
+            height: 60px;
+            background: #0070BA; /* PayPal Blue */
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        h2 {
+            font-size: 22px;
+            color: #2C2E2F;
+            margin: 0 0 12px;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 15px;
+            color: #5E6166; /* Official-like text color */
+            line-height: 1.5;
+            margin: 0 0 16px;
+        }
+
+        .amount {
+            font-size: 32px;
+            font-weight: 500;
+            color: #2C2E2F;
+            margin: 8px 0 24px;
+            letter-spacing: -0.5px;
+        }
+
+        .transaction-details {
+            border-top: 1px solid #EAECED;
+            border-bottom: 1px solid #EAECED;
+            padding: 16px 0;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .detail-row:last-child { margin-bottom: 0; }
+        .label { color: #5E6166; }
+        .value { color: #2C2E2F; font-weight: 500; }
+
+        .btn-close {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: #0070BA;
+            color: white;
+            text-decoration: none;
+            border-radius: 24px;
+            font-weight: 600;
+            font-size: 16px;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .btn-close:hover {
+            background: #005EA6;
+        }
+    </style>
+    <script>
+        setTimeout(function() {
+            window.close();
+        }, 4000);
+    </script>
+</head>
+<body>
+    <div class="confirmation-box">
+        <!-- Logo -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" class="paypal-logo" style="width: 120px;">
+        
+        <!-- Success Icon -->
+        <div class="success-icon"><i class="ri-checkbox-circle-fill"></i></div>
+
+        <h2>Payment Success</h2>
+        <div class="amount" id="amountDisplay"></div>
+        <p>You've successfully sent a payment to<br><strong>TikTok Coins</strong></p>
+
+        <div class="transaction-details">
+            <div class="detail-row">
+                <span class="label">Transaction ID</span>
+                <span class="value">9X23841923</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">Date</span>
+                <span class="value" id="date"></span>
+            </div>
+        </div>
+
+        <p style="font-size: 13px; color: #9DA3A6;">This window will close automatically.</p>
+    </div>
+
+    <script>
+        // Set dynamic date
+        const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute:'2-digit' };
+        document.getElementById('date').innerText = new Date().toLocaleDateString('en-US', options);
+        
+        // Grab amount if possible from URL param (simulated) or just static
+        // For now leave empty or simulate generic
+        // document.getElementById('amountDisplay').innerText = '$' + (Math.random() * 100).toFixed(2);
+    </script>
+</body>
+</html>

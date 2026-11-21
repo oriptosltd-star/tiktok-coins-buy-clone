@@ -1,0 +1,16 @@
+{
+  "name": "Cheaper360",
+  "short_name": "Cheaper360",
+  "description": "Get Coins and Recharge your account instantly.",
+  "start_url": "./app.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "img/logo.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png"
+    }
+  ]
+}

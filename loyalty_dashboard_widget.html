@@ -1,0 +1,484 @@
+<parameter name="CodeContent"><!-- Loyalty Rewards Section for Dashboard -->
+<style>
+.loyalty-section {
+    background: linear-gradient(135deg, #1E1E1E 0%, #2A2A2A 100%);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 32px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.loyalty-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.loyalty-header h3 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    color: #fff;
+}
+
+.tier-badge {
+    background: linear-gradient(135deg, #FE2C55 0%, #E6284C 100%);
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 99px;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tier-badge.silver {
+    background: linear-gradient(135deg, #C0C0C0 0%, #A8A8A8 100%);
+}
+
+.tier-badge.gold {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+    color: #000;
+}
+
+.tier-badge.platinum {
+    background: linear-gradient(135deg, #E5E4E2 0%, #B9B9B9 100%);
+    color: #000;
+}
+
+.points-display {
+    text-align: center;
+    margin: 32px 0;
+}
+
+.points-number {
+    font-size: 56px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #FE2C55 0%, #25F4EE 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.points-label {
+    color: #A1A1A1;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.tier-progress {
+    margin: 32px 0;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 12px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FE2C55 0%, #25F4EE 100%);
+    border-radius: 99px;
+    transition: width 0.5s ease;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    color: #A1A1A1;
+    font-size: 13px;
+}
+
+.progress-label span {
+    color: #FE2C55;
+    font-weight: 600;
+}
+
+.loyalty-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+}
+
+.loyalty-stat {
+    background: rgba(255,255,255,0.03);
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.loyalty-stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.loyalty-stat-label {
+    color: #A1A1A1;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.loyalty-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.btn-redeem, .btn-earn {
+    flex: 1;
+    padding: 14px 24px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.btn-redeem {
+    background: #FE2C55;
+    color: #fff;
+}
+
+.btn-redeem:hover {
+    background: #E6284C;
+    transform: translateY(-2px);
+}
+
+.btn-earn {
+    background: rgba(255,255,255,0.05);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.btn-earn:hover {
+    background: rgba(255,255,255,0.08);
+}
+
+.benefits-list {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.benefits-list h4 {
+    font-size: 16px;
+    margin-bottom: 16px;
+    color: #fff;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.benefit-icon {
+    width: 32px;
+    height: 32px;
+    background: rgba(254, 44, 85, 0.1);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FE2C55;
+    font-size: 16px;
+}
+
+.benefit-text {
+    flex: 1;
+    color: #E0E0E0;
+    font-size: 14px;
+}
+
+/* Redeem Modal */
+.redeem-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+}
+
+.redeem-modal.show {
+    display: flex;
+}
+
+.redeem-content {
+    background: #1E1E1E;
+    padding: 40px;
+    border-radius: 16px;
+    max-width: 500px;
+    width: 90%;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.redeem-content h3 {
+    margin: 0 0 24px 0;
+    font-size: 24px;
+    color: #fff;
+}
+
+.redeem-option {
+    background: rgba(255,255,255,0.03);
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.redeem-option:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: #FE2C55;
+}
+
+.redeem-option-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.redeem-option-desc {
+    color: #A1A1A1;
+    font-size: 14px;
+}
+
+.redeem-option-cost {
+    color: #FE2C55;
+    font-weight: 700;
+    margin-top: 8px;
+}
+</style>
+
+<!-- Loyalty Rewards Section -->
+<div class="loyalty-section">
+    <div class="loyalty-header">
+        <h3>🎁 Loyalty Rewards</h3>
+        <div class="tier-badge" id="tierBadge">
+            🥉 Bronze
+        </div>
+    </div>
+    
+    <div class="points-display">
+        <div class="points-number" id="totalPoints">0</div>
+        <div class="points-label">Total Points</div>
+    </div>
+    
+    <div class="tier-progress">
+        <div class="progress-bar">
+            <div class="progress-fill" id="tierProgress" style="width: 0%"></div>
+        </div>
+        <div class="progress-label">
+            <span>Current Tier</span>
+            <span id="pointsToNext">1,000 points to Silver</span>
+        </div>
+    </div>
+    
+    <div class="loyalty-grid">
+        <div class="loyalty-stat">
+            <div class="loyalty-stat-value" id="lifetimePoints">0</div>
+            <div class="loyalty-stat-label">Lifetime Points</div>
+        </div>
+        <div class="loyalty-stat">
+            <div class="loyalty-stat-value" id="pointsMultiplier">1.0x</div>
+            <div class="loyalty-stat-label">Points Multiplier</div>
+        </div>
+        <div class="loyalty-stat">
+            <div class="loyalty-stat-value" id="tierDiscount">0%</div>
+            <div class="loyalty-stat-label">Tier Discount</div>
+        </div>
+    </div>
+    
+    <div class="loyalty-actions">
+        <button class="btn-redeem" onclick="openRedeemModal()">
+            💰 Redeem Points
+        </button>
+        <button class="btn-earn" onclick="showEarnOptions()">
+            ⭐ Earn More
+        </button>
+    </div>
+    
+    <div class="benefits-list" id="tierBenefits">
+        <h4>Your Tier Benefits</h4>
+        <!-- Benefits will be loaded dynamically -->
+    </div>
+</div>
+
+<!-- Redeem Modal -->
+<div class="redeem-modal" id="redeemModal">
+    <div class="redeem-content">
+        <h3>Redeem Your Points</h3>
+        <p style="color: #A1A1A1; margin-bottom: 24px;">Available: <span id="availablePoints" style="color: #FE2C55; font-weight: 700;">0</span> points</p>
+        
+        <div class="redeem-option" onclick="redeemPoints(500, 'discount')">
+            <div class="redeem-option-title">$5 Discount</div>
+            <div class="redeem-option-desc">Use on your next purchase</div>
+            <div class="redeem-option-cost">500 points</div>
+        </div>
+        
+        <div class="redeem-option" onclick="redeemPoints(1000, 'discount')">
+            <div class="redeem-option-title">$10 Discount</div>
+            <div class="redeem-option-desc">Use on your next purchase</div>
+            <div class="redeem-option-cost">1,000 points</div>
+        </div>
+        
+        <div class="redeem-option" onclick="redeemPoints(2000, 'discount')">
+            <div class="redeem-option-title">$20 Discount</div>
+            <div class="redeem-option-desc">Use on your next purchase</div>
+            <div class="redeem-option-cost">2,000 points</div>
+        </div>
+        
+        <button onclick="closeRedeemModal()" style="width: 100%; padding: 14px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 8px; margin-top: 16px; cursor: pointer;">
+            Cancel
+        </button>
+    </div>
+</div>
+
+<script>
+// Load loyalty data
+async function loadLoyaltyData() {
+    try {
+        const response = await fetch('loyalty_api.php?action=get_points');
+        const data = await response.json();
+        
+        if (data.success) {
+            // Update points display
+            document.getElementById('totalPoints').textContent = data.total_points.toLocaleString();
+            document.getElementById('lifetimePoints').textContent = data.lifetime_points.toLocaleString();
+            document.getElementById('availablePoints').textContent = data.total_points.toLocaleString();
+            
+            // Update tier badge
+            updateTierDisplay(data.tier, data.lifetime_points, data.benefits);
+            
+            // Update progress to next tier
+            if (data.next_tier) {
+                document.getElementById('pointsToNext').textContent = 
+                    `${data.points_to_next.toLocaleString()} points to ${data.next_tier.charAt(0).toUpperCase() + data.next_tier.slice(1)}`;
+                
+                // Calculate progress percentage
+                const tierThresholds = { bronze: 0, silver: 1000, gold: 5000, platinum: 10000 };
+                const currentThreshold = tierThresholds[data.tier];
+                const nextThreshold = tierThresholds[data.next_tier];
+                const progress = ((data.lifetime_points - currentThreshold) / (nextThreshold - currentThreshold)) * 100;
+                document.getElementById('tierProgress').style.width = Math.min(progress, 100) + '%';
+            } else {
+                document.getElementById('pointsToNext').textContent = 'Max Tier Reached!';
+                document.getElementById('tierProgress').style.width = '100%';
+            }
+        }
+    } catch (error) {
+        console.error('Failed to load loyalty data:', error);
+    }
+}
+
+function updateTierDisplay(tier, points, benefits) {
+    const tierBadge = document.getElementById('tierBadge');
+    const tierIcons = {
+        bronze: '🥉',
+        silver: '🥈',
+        gold: '🥇',
+        platinum: '💎'
+    };
+    
+    tierBadge.textContent = `${tierIcons[tier]} ${tier.charAt(0).toUpperCase() + tier.slice(1)}`;
+    tierBadge.className = `tier-badge ${tier}`;
+    
+    // Update multiplier and discount
+    document.getElementById('pointsMultiplier').textContent = benefits.points_multiplier + 'x';
+    document.getElementById('tierDiscount').textContent = benefits.discount + '%';
+    
+    // Update benefits list
+    const benefitsList = document.getElementById('tierBenefits');
+    let benefitsHTML = '<h4>Your Tier Benefits</h4>';
+    
+    if (benefits.perks && benefits.perks.length > 0) {
+        benefits.perks.forEach(perk => {
+            benefitsHTML += `
+                <div class="benefit-item">
+                    <div class="benefit-icon">✓</div>
+                    <div class="benefit-text">${perk}</div>
+                </div>
+            `;
+        });
+    } else {
+        benefitsHTML += `
+            <div class="benefit-item">
+                <div class="benefit-icon">✓</div>
+                <div class="benefit-text">Standard support</div>
+            </div>
+        `;
+    }
+    
+    benefitsList.innerHTML = benefitsHTML;
+}
+
+function openRedeemModal() {
+    document.getElementById('redeemModal').classList.add('show');
+}
+
+function closeRedeemModal() {
+    document.getElementById('redeemModal').classList.remove('show');
+}
+
+async function redeemPoints(points, type) {
+    const formData = new FormData();
+    formData.append('action', 'redeem_points');
+    formData.append('points', points);
+    formData.append('reward_type', type);
+    
+    try {
+        const response = await fetch('loyalty_api.php', {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            alert(`Success! You've redeemed ${points} points for a $${data.discount} discount!`);
+            closeRedeemModal();
+            loadLoyaltyData(); // Reload to show updated points
+        } else {
+            alert(data.error || 'Redemption failed');
+        }
+    } catch (error) {
+        alert('Failed to redeem points. Please try again.');
+    }
+}
+
+function showEarnOptions() {
+    alert('Ways to earn points:\n\n' +
+          '• Make a purchase: 10 points per $1\n' +
+          '• Daily login: 5 points\n' +
+          '• Refer a friend: 200 points\n' +
+          '• Friend makes first purchase: 500 points\n' +
+          '• Share on social media: 25 points');
+}
+
+// Load on page load
+loadLoyaltyData();
+</script>
